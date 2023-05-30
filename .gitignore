@@ -1,0 +1,10 @@
+# Project place file
+/roact-popper.rbxlx
+
+# Roblox Studio lock files
+/*.rbxlx.lock
+/*.rbxl.lock
+
+# Wally
+Packages
+/sourcemap.json

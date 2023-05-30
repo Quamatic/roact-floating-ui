@@ -1,0 +1,13 @@
+{
+  "name": "roact-popper",
+  "tree": {
+      "$className": "DataModel",
+      "ReplicatedStorage": {
+          "$className": "ReplicatedStorage",
+          "$path": "Packages",
+          "RoactPopper": {
+              "$path": "src"
+          }
+      }
+  }
+}
