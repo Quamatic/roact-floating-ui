@@ -35,6 +35,9 @@ local ANCHOR_POINTS = {
 	},
 }
 
+--[=[
+	@within Components
+]=]
 local FloatingArrow = React.forwardRef(function(props: FloatingArrowProps, ref)
 	local placement = props.context.placement
 	local arrow = props.context.middlewareData.arrow or {}

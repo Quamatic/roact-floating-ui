@@ -2,15 +2,12 @@ local React = require(script.Parent.Parent.Parent.React)
 local Array = require(script.Parent.Parent.Parent.Collections).Array
 
 local useId = require(script.Parent.Parent.hooks.useId)
+local createPubSub = require(script.Parent.Parent.utils.createPubSub)
 
 local e = React.createElement
 
-local FloatingTreeContext = React.createContext({
-	addNode = function() end,
-	removeNode = function() end,
-})
-
-local FloatingNodeContext = React.createContext({})
+local FloatingTreeContext = React.createContext(nil)
+local FloatingNodeContext = React.createContext(nil)
 
 local function useFloatingParentNodeId()
 	return React.useContext(FloatingNodeContext).id
@@ -40,7 +37,7 @@ end
 
 type FloatingNodeProps = {
 	id: string,
-	children: any?,
+	children: React.ReactNode?,
 }
 
 local function FloatingNode(props: FloatingNodeProps)
@@ -54,7 +51,7 @@ local function FloatingNode(props: FloatingNodeProps)
 end
 
 type FloatingTreeProps = {
-	children: any?,
+	children: React.ReactNode?,
 }
 
 --[=[
@@ -75,7 +72,9 @@ local function FloatingTree(props: FloatingTreeProps)
 		end)
 	end, {})
 
-	local events = React.useState(function() end)
+	local events = React.useState(function()
+		return createPubSub()
+	end)
 
 	return e(FloatingTreeContext.Provider, {
 		value = React.useMemo(function()

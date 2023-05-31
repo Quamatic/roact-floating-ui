@@ -17,7 +17,7 @@ local function useFloating<RT>(options: UseFloatingOptions<RT>): UseFloatingRetu
 	-- Fill out defaults.
 	local placement = options.placement or "bottom"
 	local middleware = options.middleware or {}
-	local _elements = options.elements
+	local _elements = options.elements or {}
 	local externalReference = _elements.reference
 	local externalFloating = _elements.floating
 	local whileElementsMounted = options.whileElementsMounted
@@ -33,9 +33,11 @@ local function useFloating<RT>(options: UseFloatingOptions<RT>): UseFloatingRetu
 	local latestMiddleware, setLatestMiddleware = React.useState(middleware)
 
 	-- We don't need to have this check in an effect - that would cause an unneccessary re-render.
-	if not deepEqual(latestMiddleware, middleware) then
+	--[[if not deepEqual(latestMiddleware, middleware) then
+		print(latestMiddleware, middleware)
 		setLatestMiddleware(middleware)
-	end
+	end]]
+	--
 
 	local _reference, _setReference = React.useState(nil :: RT?)
 	local _floating, _setFloating = React.useState(nil :: GuiObject?)
@@ -138,7 +140,7 @@ local function useFloating<RT>(options: UseFloatingOptions<RT>): UseFloatingRetu
 
 	local floatingStyles = React.useMemo(function()
 		if not elements.floating then
-			return { position = UDim2.fromOffset(0, 0) }
+			return { Position = UDim2.fromOffset(0, 0) }
 		end
 
 		local position = data.position
@@ -146,7 +148,7 @@ local function useFloating<RT>(options: UseFloatingOptions<RT>): UseFloatingRetu
 		local y = roundByDPR(position.Y)
 
 		return {
-			position = UDim2.fromOffset(x, y),
+			Position = UDim2.fromOffset(x, y),
 		}
 	end, { data.position, elements.floating })
 

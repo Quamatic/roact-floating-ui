@@ -1,0 +1,16 @@
+{
+    "name": "floating-ui-test",
+    "tree": {
+        "$className": "DataModel",
+        "ReplicatedStorage": {
+            "$className": "ReplicatedStorage",
+            "$path": "Packages",
+            "FloatingUI": {
+                "$path": "src"
+            },
+            "Stories": {
+                "$path": "stories"
+            }
+        }
+    }
+}

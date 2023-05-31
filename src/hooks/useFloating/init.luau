@@ -2,6 +2,7 @@ local React = require(script.Parent.Parent.Parent.React)
 local Array = require(script.Parent.Parent.Parent.Collections).Array
 
 local merge = require(script.Parent.Parent.utils.merge)
+local createPubSub = require(script.Parent.Parent.utils.createPubSub)
 local isElement = require(script.Parent.Parent.utils.isElement)
 
 local useEffectEvent = require(script.Parent.utils.useEffectEvent)
@@ -33,6 +34,10 @@ local function useFloating<RT>(options: UseFloatingOptions<RT>): UseFloatingRetu
 	local tree = useFloatingTree()
 	local onOpenChange = useEffectEvent(unstable_onOpenChange)
 
+	local events = React.useState(function()
+		return createPubSub()
+	end)
+
 	local floatingId = useId()
 
 	local setPositionReference = React.useCallback(function(node: ReferenceType?)
@@ -58,10 +63,11 @@ local function useFloating<RT>(options: UseFloatingOptions<RT>): UseFloatingRetu
 			refs = refs,
 			nodeId = nodeId,
 			floatingId = floatingId,
+			events = events,
 			open = open,
 			onOpenChange = onOpenChange,
 		})
-	end, { position, nodeId, floatingId, open, onOpenChange, refs })
+	end, { position, nodeId, floatingId, events, open, onOpenChange, refs })
 
 	React.useLayoutEffect(function()
 		local node = tree and Array.find(tree.nodesRef.current, function(node)
@@ -76,8 +82,9 @@ local function useFloating<RT>(options: UseFloatingOptions<RT>): UseFloatingRetu
 	return React.useMemo(function()
 		return merge(position, {
 			context = context,
+			refs = refs,
 		})
-	end, { position, context })
+	end, { position, refs, context })
 end
 
 return useFloating

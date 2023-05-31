@@ -22,6 +22,7 @@ local nextAnimationFrameId = 0
     Only call this function when the floating element is open on the screen.
 ]=]
 local function autoUpdate(reference: GuiObject, floating: GuiObject, update: () -> (), options: AutoUpdateOptions)
+	options = options or {}
 	--local ancestorPosition = options.ancestorPosition or true
 	local ancestorResize = options.ancestorResize or true
 	local elementResize = options.elementResize or true
@@ -44,7 +45,7 @@ local function autoUpdate(reference: GuiObject, floating: GuiObject, update: () 
 	if animationFrame then
 		RunService:BindToRenderStep(
 			`floating_auto_update_{animationFrameId}`,
-			Enum.RenderPriority.Last.Value,
+			Enum.RenderPriority.Camera.Value - 1,
 			function()
 				local nextRefSize = reference.AbsoluteSize
 				local nextRefPosition = reference.AbsolutePosition

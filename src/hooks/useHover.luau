@@ -1,10 +1,12 @@
 local React = require(script.Parent.Parent.Parent.React)
 local Timers = require(script.Parent.Parent.Parent.Timers)
 
+local useLatestRef = require(script.Parent.utils.useLatestRef)
+local useFloatingTree = require(script.Parent.Parent.components.FloatingTree).useFloatingTree
+local merge = require(script.Parent.Parent.utils.merge)
+
 local types = require(script.Parent.Parent.types)
 type FloatingContext<RT> = types.FloatingContext<RT>
-
-local Event = React.Event
 
 type Delay = number | { open: number, close: number }
 
@@ -30,13 +32,18 @@ local function useHover<RT>(context: FloatingContext<RT>, props: UseHoverProps)
 	local onOpenChange = context.onOpenChange
 
 	local enabled = props.enabled or true
-	local delay = props.delay or 0
+	local handleClose = props.handleClose or nil
+	local delay_ = props.delay or 0
 	local mouseOnly = not not props.mouseOnly
 	local restMs = props.mouseOnly or 0
 	local move = props.mouseOnly or true
 
+	local tree = useFloatingTree()
 	local timeoutRef = React.useRef(nil) :: { current: thread? }
 	local restTimeoutRef = React.useRef(nil) :: { current: thread? }
+	local handleRef = React.useRef(nil)
+	local handleCloseRef = useLatestRef(handleClose)
+	local delayRef = useLatestRef(delay_)
 
 	React.useEffect(function()
 		if not enabled then
@@ -57,7 +64,7 @@ local function useHover<RT>(context: FloatingContext<RT>, props: UseHoverProps)
 	local closeWithDelay = React.useCallback(function(runElseBranch: boolean?)
 		runElseBranch = runElseBranch or true
 
-		local closeDelay = getDelay(delay, "close")
+		local closeDelay = getDelay(delay_, "close")
 
 		if runElseBranch then
 			Timers.clearTimeout(timeoutRef.current)
@@ -84,7 +91,51 @@ local function useHover<RT>(context: FloatingContext<RT>, props: UseHoverProps)
 
 		return {
 			reference = {
-				[Event.InputBegan] = function(input: InputObject)
+				[React.Event.InputBegan] = function(_rbx: Instance, input: InputObject)
+					if context.open then
+						return
+					end
+
+					if input.UserInputType ~= Enum.UserInputType.MouseMovement then
+						return
+					end
+
+					Timers.clearTimeout(timeoutRef.current)
+
+					local openDelay = getDelay(delayRef.current, "open")
+					if openDelay then
+						timeoutRef.current = Timers.setTimeout(function()
+							onOpenChange(true)
+						end, openDelay)
+					else
+						onOpenChange(true)
+					end
+				end,
+				[React.Event.InputEnded] = function(_rbx: Instance, input: InputObject)
+					Timers.clearTimeout(timeoutRef.current)
+
+					if handleCloseRef.current then
+						if not context.open then
+							Timers.clearTimeout(timeoutRef.current)
+						end
+
+						handleRef.current = handleCloseRef.current(merge(context, {
+							tree = tree,
+							position = Vector2.new(input.Position.X, input.Position.Y),
+							onClose = function()
+								closeWithDelay(false)
+							end,
+						}))
+
+						return
+					end
+
+					local shouldClose = true
+					if shouldClose then
+						closeWithDelay(false)
+					end
+				end,
+				[React.Event.InputChanged] = function(_rbx: Instance, input: InputObject)
 					if context.open or restMs == 0 then
 						return
 					end
@@ -100,10 +151,10 @@ local function useHover<RT>(context: FloatingContext<RT>, props: UseHoverProps)
 				end,
 			},
 			floating = {
-				[Event.MouseEnter] = function()
+				[React.Event.MouseEnter] = function()
 					Timers.clearTimeout(timeoutRef.current)
 				end,
-				[Event.MouseLeave] = function()
+				[React.Event.MouseLeave] = function()
 					events:emit("dismiss", {
 						type = "mouseLeave",
 					})

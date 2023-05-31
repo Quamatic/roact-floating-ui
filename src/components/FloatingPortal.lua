@@ -3,7 +3,11 @@ local ReactRoblox = require(script.Parent.Parent.Parent.ReactRoblox)
 
 local e = React.createElement
 
-local function FloatingPortal()
+type FloatingPortalProps = {
+	root: Instance?,
+}
+
+local function FloatingPortal(props: FloatingPortalProps)
 	return ReactRoblox.createPortal({}, game)
 end
 
