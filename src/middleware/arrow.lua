@@ -24,6 +24,9 @@ local function getVector2FromAxis(axis: string, position: Vector2, value: number
 	return if axis == "X" then Vector2.new(value, position.Y) else Vector2.new(position.X, value)
 end
 
+--[=[
+	@within Middleware
+]=]
 local function offset(options: Options): Middleware
 	return {
 		name = "arrow",

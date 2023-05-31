@@ -30,6 +30,9 @@ local function within(min, value, max)
 	return math.max(min, math.min(value, max))
 end
 
+--[=[
+	@within Middleware
+]=]
 local function shift(options: Options): Middleware
 	return {
 		name = "shift",

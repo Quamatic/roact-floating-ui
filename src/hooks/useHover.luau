@@ -1,6 +1,9 @@
 local React = require(script.Parent.Parent.Parent.React)
 local Timers = require(script.Parent.Parent.Parent.Timers)
 
+local types = require(script.Parent.Parent.types)
+type FloatingContext<RT> = types.FloatingContext<RT>
+
 local Event = React.Event
 
 type Delay = number | { open: number, close: number }
@@ -14,11 +17,6 @@ export type UseHoverProps = {
 	move: boolean?,
 }
 
-type FloatingContext = {
-	open: boolean,
-	onOpenChange: (boolean) -> (),
-}
-
 local function getDelay(value: Delay, prop: "open" | "close")
 	if type(value) == "number" then
 		return value
@@ -27,7 +25,10 @@ local function getDelay(value: Delay, prop: "open" | "close")
 	return value[prop]
 end
 
-local function useHover(context: FloatingContext, props: UseHoverProps)
+local function useHover<RT>(context: FloatingContext<RT>, props: UseHoverProps)
+	local events = context.events
+	local onOpenChange = context.onOpenChange
+
 	local enabled = props.enabled or true
 	local delay = props.delay or 0
 	local mouseOnly = not not props.mouseOnly
@@ -37,6 +38,22 @@ local function useHover(context: FloatingContext, props: UseHoverProps)
 	local timeoutRef = React.useRef(nil) :: { current: thread? }
 	local restTimeoutRef = React.useRef(nil) :: { current: thread? }
 
+	React.useEffect(function()
+		if not enabled then
+			return
+		end
+
+		local function onDismiss()
+			Timers.clearTimeout(timeoutRef.current)
+			Timers.clearTimeout(restTimeoutRef.current)
+		end
+
+		events:on("dismiss", onDismiss)
+		return function()
+			events:off("dismiss", onDismiss)
+		end
+	end, { enabled, events })
+
 	local closeWithDelay = React.useCallback(function(runElseBranch: boolean?)
 		runElseBranch = runElseBranch or true
 
@@ -44,14 +61,14 @@ local function useHover(context: FloatingContext, props: UseHoverProps)
 
 		if runElseBranch then
 			Timers.clearTimeout(timeoutRef.current)
-			context.onOpenChange(false)
+			onOpenChange(false)
 		else
 			Timers.clearTimeout(timeoutRef.current)
 			timeoutRef.current = Timers.setTimeout(function()
-				context.onOpenChange(false)
+				onOpenChange(false)
 			end, closeDelay)
 		end
-	end, { context.onOpenChange })
+	end, { onOpenChange })
 
 	React.useEffect(function()
 		return function()
@@ -78,7 +95,7 @@ local function useHover(context: FloatingContext, props: UseHoverProps)
 
 					Timers.clearTimeout(restTimeoutRef.current)
 					restTimeoutRef.current = Timers.setTimeout(function()
-						context.onOpenChange(true)
+						onOpenChange(true)
 					end, restMs)
 				end,
 			},
@@ -87,6 +104,10 @@ local function useHover(context: FloatingContext, props: UseHoverProps)
 					Timers.clearTimeout(timeoutRef.current)
 				end,
 				[Event.MouseLeave] = function()
+					events:emit("dismiss", {
+						type = "mouseLeave",
+					})
+
 					closeWithDelay(false)
 				end,
 			},

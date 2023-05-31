@@ -53,6 +53,9 @@ local function convertValueToCoords(state: MiddlewareState, value: Options)
 	return Vector2.new(x, y)
 end
 
+--[=[
+	@within Middleware
+]=]
 local function offset(value: Options): Middleware
 	value = value or 0
 

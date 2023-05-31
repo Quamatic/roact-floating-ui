@@ -74,4 +74,38 @@ type Position = {
 	position: Vector2,
 }
 
+type ContextData = {
+	[string]: any,
+}
+
+type MutableRefObject<T> = {
+	current: T,
+}
+
+type ReferenceType = GuiObject
+
+type ExtendedRefs<RT> = {
+	reference: MutableRefObject<ReferenceType?>,
+	floating: MutableRefObject<GuiObject?>,
+	setReference: (node: RT?) -> (),
+	setFloating: (node: GuiObject) -> (),
+	setPositionReference: (node: ReferenceType?) -> (),
+}
+
+type FloatingEvents = {
+	emit: <T>(self: FloatingEvents, event: T, data: any?) -> (),
+	on: (self: FloatingEvents, handler: (data: any) -> ()) -> (),
+	off: (self: FloatingEvents, handler: (data: any) -> ()) -> (),
+}
+
+export type FloatingContext<RT> = {
+	open: boolean,
+	onOpenChange: (open: boolean) -> (),
+	events: FloatingEvents,
+	dataRef: MutableRefObject<ContextData>,
+	nodeId: string?,
+	floatingId: string,
+	refs: ExtendedRefs<RT>,
+}
+
 return {}

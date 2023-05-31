@@ -16,6 +16,9 @@ export type InnerProps = {
 	referenceOverflowThreshold: number?,
 }
 
+--[=[
+	@within Middleware
+]=]
 local function inner(props: InnerProps): Middleware
 	return {
 		name = "inner",

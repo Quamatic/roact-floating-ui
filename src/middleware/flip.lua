@@ -21,6 +21,9 @@ local getOppositePlacement = require(script.Parent.Parent.utils.getOppositePlace
 local getExpandedPlacements = require(script.Parent.Parent.utils.getExpandedPlacements)
 local getOppositeAxisPlacements = require(script.Parent.Parent.utils.getOppositeAxisPlacement)
 
+--[=[
+	@within Middleware
+]=]
 local function flip(options: Options): Middleware
 	return {
 		name = "flip",

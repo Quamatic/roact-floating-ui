@@ -46,6 +46,9 @@ local function getPlacementList(alignment: string | nil, autoAlignment: boolean,
 	end)
 end
 
+--[=[
+	@within Middleware
+]=]
 local function autoPlacement(options: Options): Middleware
 	return {
 		name = "autoPlacement",

@@ -1,5 +1,6 @@
 local React = require(script.Parent.Parent.React)
 local ReactRoblox = require(script.Parent.Parent.ReactRoblox)
+local ReactSpring = require(script.Parent.Parent.ReactSpring)
 
 local types = require(script.Parent.types)
 local merge = require(script.Parent.utils.merge)
@@ -19,8 +20,19 @@ local function useFloating(options: UseFloatingOptions)
 	local containerAbsoluteSize, setContainerAbsoluteSize = React.useState(Vector2.zero)
 	local containerAbsolutePosition, setContainerAbsolutePosition = React.useState(Vector2.zero)
 
+	local styles, api = ReactSpring.useSpring(function()
+		return {
+			position = UDim2.fromOffset(0, 0),
+			config = {
+				bounce = 3,
+			},
+		}
+	end)
+
 	local computedData, setComputedData = React.useState({
+		_pos = styles.position,
 		position = Vector2.zero,
+		placement = options.placement,
 		middlewareData = {},
 	})
 
@@ -77,10 +89,10 @@ local function useFloating(options: UseFloatingOptions)
 			middleware = options.middleware,
 		})
 
-		setComputedData(data)
+		setComputedData(merge(data, { _pos = styles.position }))
 
 		local position = data.position
-		floatingRef.Position = UDim2.fromOffset(position.X, position.Y)
+		api.start({ position = UDim2.fromOffset(position.X, position.Y) })
 	end, { containerAbsoluteSize, containerAbsolutePosition })
 
 	return targetRef, floatingRef, computedData

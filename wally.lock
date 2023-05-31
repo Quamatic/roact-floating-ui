@@ -3,6 +3,11 @@
 registry = "test"
 
 [[package]]
+name = "chriscerie/react-spring"
+version = "1.1.5"
+dependencies = [["Promise", "evaera/promise@4.0.0"], ["React", "core-packages/react@17.0.1-rc.19"], ["ReactRoblox", "core-packages/react-roblox@17.0.1-rc.19"], ["TestEZ", "roblox/testez@0.4.1"]]
+
+[[package]]
 name = "core-packages/boolean"
 version = "1.2.3"
 dependencies = [["Number", "core-packages/number@1.2.3"]]
@@ -110,4 +115,9 @@ dependencies = [["Collections", "jsdotlua/collections@1.2.3"]]
 [[package]]
 name = "quamatic/floating-ui"
 version = "1.0.0"
-dependencies = [["Collections", "core-packages/collections@1.2.3"], ["Promise", "evaera/promise@4.0.0"], ["React", "core-packages/react@17.0.1-rc.19"], ["ReactRoblox", "core-packages/react-roblox@17.0.1-rc.19"], ["Timers", "jsdotlua/timers@1.2.3"]]
+dependencies = [["Collections", "core-packages/collections@1.2.3"], ["Promise", "evaera/promise@4.0.0"], ["React", "core-packages/react@17.0.1-rc.19"], ["ReactRoblox", "core-packages/react-roblox@17.0.1-rc.19"], ["ReactSpring", "chriscerie/react-spring@1.1.5"], ["Timers", "jsdotlua/timers@1.2.3"]]
+
+[[package]]
+name = "roblox/testez"
+version = "0.4.1"
+dependencies = []

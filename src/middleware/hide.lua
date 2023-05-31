@@ -32,6 +32,9 @@ local function isAnySideFullyClipped(overflow)
 	end)
 end
 
+--[=[
+	@within Middleware
+]=]
 local function hide(options: Options): Middleware
 	return {
 		name = "hide",
