@@ -8,7 +8,6 @@ exclude = ["stories"]
 [dependencies]
 React = "core-packages/react@17.0.1-rc.19"
 ReactRoblox = "core-packages/react-roblox@17.0.1-rc.19"
-ReactSpring = "chriscerie/react-spring@1.1.5"
 Collections = "core-packages/collections@1.2.3"
 Timers = "jsdotlua/timers@1.2.3"
 Promise = "evaera/promise@^4"
