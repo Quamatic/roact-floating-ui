@@ -19,6 +19,8 @@ export type Middleware<T = any> = {
 }
 
 export type MiddlewareState = Position & {
+	placement: Placement,
+	rects: { floating: GuiObject, reference: GuiObject },
 	middlewareData: MiddlewareData,
 }
 
@@ -63,7 +65,6 @@ export type ComputePositionConfig = {
 }
 
 export type ComputePositionReturn = Position & {
-	placement: Placement,
 	middlewareData: MiddlewareData,
 }
 

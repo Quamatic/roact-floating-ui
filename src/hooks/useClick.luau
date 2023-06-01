@@ -26,10 +26,10 @@ local function useClick<RT>(context: FloatingContext<RT>, props: UseClickProps)
 
 		return {
 			reference = {
-				[React.Event.InputBegan] = function(input: InputObject)
+				[React.Event.InputBegan] = function(_rbx: Instance, input: InputObject)
 					if
 						input.UserInputType ~= Enum.UserInputType.MouseButton1
-						or input.UserInputType ~= Enum.UserInputType.Touch
+						and input.UserInputType ~= Enum.UserInputType.Touch
 					then
 						return
 					end

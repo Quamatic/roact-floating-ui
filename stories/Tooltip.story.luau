@@ -32,6 +32,7 @@ local function Tooltip(props: TooltipProps)
 		whileElementsMounted = FloatingUI.autoUpdate :: any,
 	})
 
+	local refs = floating.refs
 	local context = floating.context
 
 	local interactions = FloatingUI.useInteractions({
@@ -44,22 +45,23 @@ local function Tooltip(props: TooltipProps)
 
 	FloatingUI.useDelayGroup(context, { id = id })
 
+	local transition = FloatingUI.useTransitionStatus(context, {})
 	local children = props.children
 
 	return e(React.Fragment, nil, {
 		Trigger = React.isValidElement(children) and React.cloneElement(
 			children,
 			interactions.getReferenceProps({
-				ref = floating.refs.setReference,
+				ref = refs.setReference,
 			})
 		),
-		Tooltip = open and ReactRoblox.createPortal(
+		Tooltip = transition.isMounted and ReactRoblox.createPortal(
 			e(
 				"Frame",
 				merge(floating.floatingStyles, {
 					AutomaticSize = Enum.AutomaticSize.XY,
 					BackgroundTransparency = 1,
-					ref = floating.refs.setFloating,
+					ref = refs.setFloating,
 				}),
 				e(
 					"TextLabel",
