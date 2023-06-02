@@ -20,7 +20,8 @@ export type Middleware<T = any> = {
 
 export type MiddlewareState = Position & {
 	placement: Placement,
-	rects: { floating: GuiObject, reference: GuiObject },
+	rects: ElementRects,
+	elements: Elements,
 	middlewareData: MiddlewareData,
 }
 
@@ -68,11 +69,42 @@ export type ComputePositionReturn = Position & {
 	middlewareData: MiddlewareData,
 }
 
-export type VirtualElement = {}
-export type Element = GuiObject | VirtualElement
+export type ClientRectObject = Rect & {
+	top: number,
+	bottom: number,
+	left: number,
+	right: number,
+}
+
+export type VirtualElement = {
+	getBoundingClientRect: () -> ClientRectObject,
+	contextElement: Element?,
+}
+
+export type ReferenceElement = Element | VirtualElement
+export type FloatingElement = GuiObject
+export type Element = GuiObject
+
+export type Elements = {
+	reference: ReferenceElement,
+	floating: FloatingElement,
+}
+
+export type Rect = {
+	x: number,
+	y: number,
+	width: number,
+	height: number,
+}
+
+export type ElementRects = {
+	reference: Rect,
+	floating: Rect,
+}
 
 type Position = {
-	position: Vector2,
+	x: number,
+	y: number,
 }
 
 type ContextData = {

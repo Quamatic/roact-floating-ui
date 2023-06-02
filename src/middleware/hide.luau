@@ -43,15 +43,31 @@ local function hide(options: Options): Middleware
 			local strategy = options.strategy or "referenceHidden"
 			local rects = state.rects
 
-			local overflow = detectOverflow(state, {})
-			local offsets = getSideOffsets(overflow, rects.reference.AbsoluteSize)
+			if strategy == "referenceHidden" then
+				local overflow = detectOverflow(state, {
+					elementContext = "reference",
+				})
+				local offsets = getSideOffsets(overflow, rects.reference)
+				return {
+					data = {
+						referenceHiddenOffsets = offsets,
+						referenceHidden = isAnySideFullyClipped(offsets),
+					},
+				}
+			elseif strategy == "escaped" then
+				local overflow = detectOverflow(state, {
+					altBoundary = true,
+				})
+				local offsets = getSideOffsets(overflow, rects.floating)
+				return {
+					data = {
+						escapedOffsets = offsets,
+						escaped = isAnySideFullyClipped(offsets),
+					},
+				}
+			end
 
-			return {
-				data = {
-					referenceHiddenOffsets = offsets,
-					referenceHidden = isAnySideFullyClipped(offsets),
-				},
-			}
+			return {}
 		end,
 	}
 end

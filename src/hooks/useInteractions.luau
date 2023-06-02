@@ -12,7 +12,7 @@ local function mergeProps(userProps, propsList, elementKey)
 		Array.reduce(
 			Array.concat(
 				Array.map(propsList, function(value)
-					return if value then value[elementKey] else Object.None
+					return if value then value[elementKey] else nil
 				end),
 				userProps
 			),

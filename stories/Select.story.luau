@@ -46,8 +46,8 @@ local function Select(props: SelectProps)
 			FloatingUI.flip({}),
 			FloatingUI.size({
 				apply = function(data)
-					local rects = data.rects
-					local reference, floating = rects.reference, rects.floating
+					local elements = data.elements
+					local reference, floating = elements.reference, elements.floating
 
 					floating.Size = UDim2.new(UDim.new(0, reference.AbsoluteSize.X), floating.Size.Height)
 					floating.UISizeConstraint.MaxSize = Vector2.new(data.availableWidth, data.availableHeight)

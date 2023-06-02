@@ -12,6 +12,7 @@
 
 local _FloatingTree = require(script.components.FloatingTree)
 local _FloatingDelayGroup = require(script.components.FloatingDelayGroup)
+local _shift = require(script.middleware.shift)
 
 return table.freeze({
 	useFloating = require(script.hooks.useFloating),
@@ -30,7 +31,8 @@ return table.freeze({
 
 	offset = require(script.middleware.offset),
 	flip = require(script.middleware.flip),
-	shift = require(script.middleware.shift),
+	shift = _shift.shift,
+	limitShift = _shift.limitShift,
 	hide = require(script.middleware.hide),
 	arrow = require(script.middleware.arrow),
 	size = require(script.middleware.size),

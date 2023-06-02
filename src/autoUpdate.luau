@@ -2,7 +2,7 @@ local RunService = game:GetService("RunService")
 local Array = require(script.Parent.Parent.Collections).Array
 
 type AutoUpdateOptions = {
-	ancestorPosition: boolean?,
+	--ancestorPosition: boolean?,
 	ancestorResize: boolean?,
 	elementResize: boolean?,
 	animationFrame: boolean?,

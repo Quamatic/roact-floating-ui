@@ -2,28 +2,44 @@ local UserInputService = game:GetService("UserInputService")
 
 local React = require(script.Parent.Parent.Parent.React)
 
+local useEffectEvent = require(script.Parent.utils.useEffectEvent)
+local getBoundingClientRect = require(script.Parent.Parent.utils.getAlignment)
+
 local types = require(script.Parent.Parent.types)
+type VirtualElement = types.VirtualElement
+type Element = types.Element
 type FloatingContext<RT> = types.FloatingContext<RT>
 
-local useEffectEvent = require(script.Parent.utils.useEffectEvent)
+local dummyRect = {
+	width = 0,
+	height = 0,
+	x = 0,
+	y = 0,
+}
 
-local function createVirtualElement(rbxRef: { current: GuiObject? }, data)
+local function createVirtualElement(
+	rbxRef: React.ElementRef<{ current: Element? }>,
+	data: {
+		x: number,
+		y: number,
+		axis: "x" | "y" | "both",
+	}
+): VirtualElement
 	local offsetX: number?
 	local offsetY: number?
 
 	return {
-		contextElement = rbxRef,
+		contextElement = rbxRef.current,
 		getBoundingClientRect = function()
-			local isXAxis = data.axis == "X" or data.axis == "both"
-			local isYAxis = data.axis == "Y" or data.axis == "both"
+			local rbxRect = (rbxRef.current and getBoundingClientRect(rbxRef.current)) or dummyRect
 
-			local size = if rbxRef.current then rbxRef.current.AbsoluteSize else Vector2.zero
-			local position = if rbxRef.current then rbxRef.current.AbsolutePosition else Vector2.zero
+			local isXAxis = data.axis == "x" or data.axis == "both"
+			local isYAxis = data.axis == "y" or data.axis == "both"
 
-			local width = size.X
-			local height = size.Y
-			local x = position.X
-			local y = position.Y
+			local width = rbxRect.width
+			local height = rbxRect.height
+			local x = rbxRect.x
+			local y = rbxRect.y
 
 			if offsetX == nil and data.x and isXAxis then
 				offsetX = x - data.x
@@ -39,8 +55,14 @@ local function createVirtualElement(rbxRef: { current: GuiObject? }, data)
 			height = 0
 
 			return {
-				AbsoluteSize = Vector2.new(width, height),
-				AbsolutePosition = Vector2.new(x + width, y + height),
+				width = width,
+				height = height,
+				x = x,
+				y = y,
+				top = y,
+				right = x + width,
+				bottom = y + height,
+				left = x,
 			}
 		end,
 	}
@@ -72,8 +94,12 @@ local function useClientPoint<RT>(context: FloatingContext<RT>, props: UseClient
 		end
 	end, {})
 
-	local setReference = useEffectEvent(function(position: Vector2)
-		refs.setPositionReference(createVirtualElement(refs.reference, props))
+	local setReference = useEffectEvent(function(x: number | nil, y: number | nil)
+		refs.setPositionReference(createVirtualElement(refs.reference, {
+			x = x,
+			y = y,
+			axis = axis,
+		}))
 	end)
 
 	local handleReferenceEnterOrMove = useEffectEvent(function(_rbx: GuiObject, input: InputObject)

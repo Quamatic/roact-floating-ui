@@ -24,7 +24,8 @@ local function useFloating<RT>(options: UseFloatingOptions<RT>): UseFloatingRetu
 	local open = options.open
 
 	local data, setData = React.useState({
-		position = Vector2.zero,
+		x = 0,
+		y = 0,
 		placement = placement,
 		middlewareData = {},
 		isPositioned = false,
@@ -140,17 +141,18 @@ local function useFloating<RT>(options: UseFloatingOptions<RT>): UseFloatingRetu
 
 	local floatingStyles = React.useMemo(function()
 		if not elements.floating then
-			return { Position = UDim2.fromOffset(0, 0) }
+			return {
+				Position = UDim2.fromOffset(0, 0),
+			}
 		end
 
-		local position = data.position
-		local x = roundByDPR(position.X)
-		local y = roundByDPR(position.Y)
+		local x = roundByDPR(data.x)
+		local y = roundByDPR(data.y)
 
 		return {
 			Position = UDim2.fromOffset(x, y),
 		}
-	end, { data.position, elements.floating })
+	end, { data.x, data.y, elements.floating })
 
 	return React.useMemo(function()
 		return merge(data, {

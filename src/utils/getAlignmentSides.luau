@@ -10,7 +10,7 @@ local function getAlignmentSides(placement, rects)
 		then if alignment == "start" then "right" else "left"
 		else if alignment == "start" then "bottom" else "top"
 
-	if rects.reference.AbsoluteSize[mainAxis] > rects.floating.AbsoluteSize[mainAxis] then
+	if rects.reference[mainAxis] > rects.floating[mainAxis] then
 		mainAlignmentSide = getOppositePlacement(mainAlignmentSide)
 	end
 

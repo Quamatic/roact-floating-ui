@@ -30,7 +30,7 @@ local function convertValueToCoords(state: MiddlewareState, value: Options)
 
 	local side = getSide(placement)
 	local alignment = getAlignment(placement)
-	local isVertical = getMainAxisFromPlacement(placement) == "X"
+	local isVertical = getMainAxisFromPlacement(placement) == "x"
 	local mainAxisMulti = if side == "left" or side == "top" then -1 else 1
 	local crossAxisMulti = 1
 
@@ -50,7 +50,7 @@ local function convertValueToCoords(state: MiddlewareState, value: Options)
 		y = crossAxis * crossAxisMulti
 	end
 
-	return Vector2.new(x, y)
+	return { x = x, y = y }
 end
 
 --[=[
@@ -63,11 +63,13 @@ local function offset(value: Options): Middleware
 		name = "offset",
 		options = value,
 		fn = function(state)
-			local position = state.position
+			local x = state.x
+			local y = state.y
 			local diffCoords = convertValueToCoords(state, value)
 
 			return {
-				position = Vector2.new(position.X + diffCoords.X, position.Y + diffCoords.Y),
+				x = x + diffCoords.x,
+				y = y + diffCoords.y,
 				data = diffCoords,
 			}
 		end,

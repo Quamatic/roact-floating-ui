@@ -1,9 +1,12 @@
 local computeCoordsFromPlacement = require(script.Parent.computeCoordsFromPlacement)
 
+local getElementRects = require(script.Parent.utils.getElementRects)
+
 local types = require(script.Parent.types)
 type Element = types.Element
 type ComputePositionConfig = types.ComputePositionConfig
 type ComputePositionReturn = types.ComputePositionReturn
+type MiddlewareData = types.MiddlewareData
 
 local merge = require(script.Parent.utils.merge)
 
@@ -22,34 +25,40 @@ local function computePosition(
 	local placement = config.placement or "bottom"
 	local middleware = config.middleware or {}
 
-	local rects = { reference = reference, floating = floating }
-	local position = computeCoordsFromPlacement(rects, placement)
+	local rects = getElementRects(reference, floating)
+	local x, y = computeCoordsFromPlacement(rects, placement)
 	local statefulPlacement = placement
-	local middlewareData = {}
+	local middlewareData: MiddlewareData = {}
 	local resetCount = 0
 
 	-- we have to use a while loop iteration here so that middleware can reset the lifecycle if needed (index going back to 1)
 	local index = 1
 	while index <= #middleware do
 		local middleware_ = middleware[index]
+		local name = middleware_.name
+
 		local result = middleware_.fn({
-			position = position,
+			x = x,
+			y = y,
 			initialPlacement = placement,
 			placement = statefulPlacement,
 			middlewareData = middlewareData,
 			rects = rects,
-			elements = rects,
+			elements = { reference = reference, floating = floating },
 		})
 
-		if result.position then
-			position = result.position
-		end
+		local nextX = result.x
+		local nextY = result.y
+		local data = result.data
+		local reset = result.reset
+
+		x = nextX or x
+		y = nextY or y
 
 		middlewareData = merge(middlewareData, {
-			[middleware_.name] = merge(middlewareData[middleware_.name], result.data),
+			[name] = merge(middlewareData[name], data),
 		})
 
-		local reset = result.reset
 		if reset and resetCount <= MAX_RESET_COUNT then
 			resetCount += 1
 
@@ -58,7 +67,11 @@ local function computePosition(
 					statefulPlacement = reset.placement
 				end
 
-				position = computeCoordsFromPlacement(rects, statefulPlacement)
+				if reset.rects then
+					rects = if reset.rects == true then getElementRects(reference, floating) else reset.rects
+				end
+
+				x, y = computeCoordsFromPlacement(rects, statefulPlacement)
 			end
 
 			index = 1
@@ -69,7 +82,8 @@ local function computePosition(
 	end
 
 	return {
-		position = position,
+		x = x,
+		y = y,
 		placement = statefulPlacement,
 		middlewareData = middlewareData,
 	}

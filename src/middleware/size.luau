@@ -33,10 +33,10 @@ local function size(options: Options): Middleware
 			local side = getSide(placement)
 			local alignment = getAlignment(placement)
 			local axis = getMainAxisFromPlacement(placement)
-			local isXAxis = axis == "X"
+			local isXAxis = axis == "x"
 
-			local width = rects.floating.AbsoluteSize.X
-			local height = rects.floating.AbsoluteSize.Y
+			local width = rects.floating.width
+			local height = rects.floating.height
 
 			local heightSide: "top" | "bottom"
 			local widthSide: "left" | "right"
