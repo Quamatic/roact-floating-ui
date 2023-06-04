@@ -34,11 +34,9 @@ local function useFloating<RT>(options: UseFloatingOptions<RT>): UseFloatingRetu
 	local latestMiddleware, setLatestMiddleware = React.useState(middleware)
 
 	-- We don't need to have this check in an effect - that would cause an unneccessary re-render.
-	--[[if not deepEqual(latestMiddleware, middleware) then
-		print(latestMiddleware, middleware)
+	if not deepEqual(latestMiddleware, middleware) then
 		setLatestMiddleware(middleware)
-	end]]
-	--
+	end
 
 	local _reference, _setReference = React.useState(nil :: RT?)
 	local _floating, _setFloating = React.useState(nil :: GuiObject?)

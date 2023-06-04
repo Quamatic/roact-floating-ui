@@ -1,4 +1,6 @@
 local computeCoordsFromPlacement = require(script.Parent.computeCoordsFromPlacement)
+local convertOffsetParentRelativeRectToViewportRelativeRect =
+	require(script.Parent.utils.convertOffsetParentRelativeRectToViewportRelativeRect)
 
 local getElementRects = require(script.Parent.utils.getElementRects)
 

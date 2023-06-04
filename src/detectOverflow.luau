@@ -2,6 +2,8 @@ local getSideObjectFromPadding = require(script.Parent.utils.getSideObjectFromPa
 local getClippingRect = require(script.Parent.utils.getClippingRect)
 local getLayerElement = require(script.Parent.utils.getLayerElement)
 local rectToClientRect = require(script.Parent.utils.rectToClientRect)
+local convertOffsetParentRelativeRectToViewportRelativeRect =
+	require(script.Parent.utils.convertOffsetParentRelativeRectToViewportRelativeRect)
 local isElement = require(script.Parent.utils.isElement)
 local merge = require(script.Parent.utils.merge)
 
@@ -63,7 +65,8 @@ local function detectOverflow(state: MiddlewareState, options: Options)
 	}))
 
 	local rect = if elementContext == "floating" then merge(rects.floating, { x = x, y = y }) else rects.reference
-	local elementClientRect = rectToClientRect(rect)
+	local elementClientRect =
+		rectToClientRect(convertOffsetParentRelativeRectToViewportRelativeRect(rect, elements.floating.Parent))
 
 	local overflows = {
 		top = clippingClientRect.top - elementClientRect.top + paddingObject.top,

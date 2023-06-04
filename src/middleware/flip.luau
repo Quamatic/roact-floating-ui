@@ -60,7 +60,7 @@ local function flip(options: Options): Middleware
 
 			local placements = { initialPlacement, unpack(fallbackPlacements) }
 
-			local overflow = detectOverflow(state, {})
+			local overflow = detectOverflow(state, options :: any)
 			local overflows = {}
 			local overflowsData = if middlewareData.flip then middlewareData.flip.overflows else {}
 

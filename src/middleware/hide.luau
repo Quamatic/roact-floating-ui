@@ -7,26 +7,25 @@ local types = require(script.Parent.Parent.types)
 
 type Middleware = types.Middleware
 type MiddlewareState = types.MiddlewareState
+type SideObject = types.SideObject
+type Rect = types.Rect
 
 export type Options = {
 	strategy: "referenceHidden" | "escaped"?,
 }
 
-local getSide = require(script.Parent.Parent.utils.getSide)
-local getAlignment = require(script.Parent.Parent.utils.getAlignment)
-local getMainAxisFromPlacement = require(script.Parent.Parent.utils.getMainAxisFromPlacement)
 local detectOverflow = require(script.Parent.Parent.detectOverflow)
 
-local function getSideOffsets(overflow, size)
+local function getSideOffsets(overflow: SideObject, rect: Rect)
 	return {
-		top = overflow.top - size.Y,
-		right = overflow.right - size.X,
-		bottom = overflow.bottom - size.Y,
-		left = overflow.left - size.X,
+		top = overflow.top - rect.height,
+		right = overflow.right - rect.width,
+		bottom = overflow.bottom - rect.height,
+		left = overflow.left - rect.width,
 	}
 end
 
-local function isAnySideFullyClipped(overflow)
+local function isAnySideFullyClipped(overflow: SideObject)
 	return Array.some(sides, function(side)
 		return overflow[side] >= 0
 	end)

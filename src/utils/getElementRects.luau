@@ -1,30 +1,24 @@
+local getBoundingClientRect = require(script.Parent.getBoundingClientRect)
+
 local types = require(script.Parent.Parent.types)
 type ReferenceElement = types.ReferenceElement
 type FloatingElement = types.FloatingElement
 
-local function getBoundingClientRect(element: ReferenceElement)
-	if typeof(element) == "Instance" and element:IsA("GuiObject") then
-		local size: Vector2 = element.AbsoluteSize
-		local position: Vector2 = element.AbsolutePosition
+local function getRectRelativeToOffsetParent(reference, offset)
+	local rect = getBoundingClientRect(reference)
+	local offsetRect = getBoundingClientRect(offset)
 
-		return {
-			x = position.X,
-			y = position.Y,
-			width = size.X,
-			height = size.Y,
-			top = position.Y,
-			bottom = size.Y + position.Y,
-			left = position.X,
-			right = size.X + position.X,
-		}
-	else
-		return element.getBoundingClientRect()
-	end
+	return {
+		x = rect.x - offsetRect.x,
+		y = rect.y - offsetRect.y,
+		width = rect.width,
+		height = rect.height,
+	}
 end
 
 local function getElementRects(reference: ReferenceElement, floating: FloatingElement)
 	return {
-		reference = getBoundingClientRect(reference),
+		reference = getRectRelativeToOffsetParent(reference, floating.Parent),
 		floating = {
 			x = 0,
 			y = 0,

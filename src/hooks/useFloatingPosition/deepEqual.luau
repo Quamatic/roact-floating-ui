@@ -6,6 +6,11 @@ local function deepEqual(a, b)
 	for k in pairs(a) do
 		local av = a[k]
 		local bv = b[k]
+
+		if type(av) == "function" or type(bv) == "function" then
+			continue
+		end
+
 		if type(av) == "table" and type(bv) == "table" then
 			local result = deepEqual(av, bv)
 			if not result then

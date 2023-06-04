@@ -28,20 +28,15 @@ local function getInnerBoundingClientRect(element: GuiObject): Rect
 	}
 end
 
-local function getClippingElementAncestors(element: Element)
-	return element.Parent
-end
-
 local function getClippingRect(options: any)
 	local element = options.element
 	local boundary = options.boundary
 	local rootBoundary = options.rootBoundary
+	-- TODO ^ fix?
 	local rect: Rect
 
 	if boundary == "parent" then
 		rect = getInnerBoundingClientRect(element.Parent)
-	elseif rootBoundary == "viewport" then
-		rect = getViewportRect()
 	elseif isElement(boundary) then
 		rect = getInnerBoundingClientRect(boundary)
 	else

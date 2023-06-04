@@ -45,9 +45,8 @@ local FloatingArrow = React.forwardRef(function(props: FloatingArrowProps, ref)
 	local side, alignment = unpack(string.split(placement, "-"))
 	local isVerticalSide = side == "top" or side == "bottom"
 
-	local position = arrow.position or Vector2.zero
-	local arrowX = position.X
-	local arrowY = position.Y
+	local arrowX = arrow.x or 0
+	local arrowY = arrow.y or 0
 
 	if side == "top" then
 		arrowY += 8
@@ -56,7 +55,7 @@ local FloatingArrow = React.forwardRef(function(props: FloatingArrowProps, ref)
 	elseif side == "left" then
 		arrowX += 8
 	else
-		arrowX -= 8
+		arrowX -= 12
 	end
 
 	local anchor = ANCHOR_POINTS[side]

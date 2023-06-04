@@ -69,12 +69,16 @@ export type ComputePositionReturn = Position & {
 	middlewareData: MiddlewareData,
 }
 
-export type ClientRectObject = Rect & {
+export type ClientRectObject = Rect & SideObject
+
+export type SideObject = {
 	top: number,
 	bottom: number,
 	left: number,
 	right: number,
 }
+
+export type Padding = number | SideObject
 
 export type VirtualElement = {
 	getBoundingClientRect: () -> ClientRectObject,
@@ -125,10 +129,10 @@ type ExtendedRefs<RT> = {
 	setPositionReference: (node: ReferenceType?) -> (),
 }
 
-type FloatingEvents = {
-	emit: <T>(self: FloatingEvents, event: T, data: any?) -> (),
-	on: (self: FloatingEvents, handler: (data: any) -> ()) -> (),
-	off: (self: FloatingEvents, handler: (data: any) -> ()) -> (),
+export type FloatingEvents = {
+	emit: (self: FloatingEvents, event: string, data: any?) -> (),
+	on: (self: FloatingEvents, listener: (data: any) -> ()) -> (),
+	off: (self: FloatingEvents, listener: (data: any) -> ()) -> (),
 }
 
 export type FloatingContext<RT> = {

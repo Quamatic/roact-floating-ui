@@ -1,6 +1,9 @@
 local Collections = require(script.Parent.Parent.Parent.Collections)
 local Map, Array = Collections.Map, Collections.Array
 
+local types = require(script.Parent.Parent.types)
+type FloatingEvents = types.FloatingEvents
+
 local function createPubSub()
 	local map = Map.new()
 	local sub = {}
@@ -24,7 +27,7 @@ local function createPubSub()
 		)
 	end
 
-	return sub
+	return (sub :: any) :: FloatingEvents
 end
 
 return createPubSub

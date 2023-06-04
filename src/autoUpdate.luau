@@ -1,6 +1,8 @@
 local RunService = game:GetService("RunService")
 local Array = require(script.Parent.Parent.Collections).Array
 
+local getBoundingClientRect = require(script.Parent.utils.getBoundingClientRect)
+
 type AutoUpdateOptions = {
 	--ancestorPosition: boolean?,
 	ancestorResize: boolean?,
@@ -42,22 +44,25 @@ local function autoUpdate(reference: GuiObject, floating: GuiObject, update: () 
 		table.insert(connections, floating:GetPropertyChangedSignal("AbsoluteSize"):Connect(update))
 	end
 
+	local prevRefRect = if animationFrame then getBoundingClientRect(reference) else nil
+
 	if animationFrame then
 		RunService:BindToRenderStep(
 			`floating_auto_update_{animationFrameId}`,
 			Enum.RenderPriority.Camera.Value - 1,
 			function()
-				local nextRefSize = reference.AbsoluteSize
-				local nextRefPosition = reference.AbsolutePosition
+				local nextRefRect = getBoundingClientRect(reference)
 
 				if
-					nextRefSize.X ~= nextRefSize.X
-					or nextRefSize.Y ~= nextRefSize.Y
-					or nextRefPosition.X ~= nextRefPosition.X
-					or nextRefPosition.Y ~= nextRefPosition.Y
+					nextRefRect.x ~= prevRefRect.x
+					or nextRefRect.y ~= prevRefRect.y
+					or nextRefRect.width ~= prevRefRect.width
+					or nextRefRect.height ~= prevRefRect.height
 				then
 					update()
 				end
+
+				prevRefRect = nextRefRect
 			end
 		)
 	end

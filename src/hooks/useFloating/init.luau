@@ -3,6 +3,7 @@ local Array = require(script.Parent.Parent.Parent.Collections).Array
 
 local merge = require(script.Parent.Parent.utils.merge)
 local createPubSub = require(script.Parent.Parent.utils.createPubSub)
+local getBoundingClientRect = require(script.Parent.Parent.utils.getBoundingClientRect)
 local isElement = require(script.Parent.Parent.utils.isElement)
 
 local useEffectEvent = require(script.Parent.utils.useEffectEvent)
@@ -43,14 +44,15 @@ local function useFloating<RT>(options: UseFloatingOptions<RT>): UseFloatingRetu
 	local setPositionReference = React.useCallback(function(node: ReferenceType?)
 		local positionReference = if isElement(node)
 			then {
-				AbsoluteSize = (node :: GuiObject).AbsoluteSize,
-				AbsolutePosition = (node :: GuiObject).AbsolutePosition,
+				getBoundingClientRect = function()
+					return getBoundingClientRect(node)
+				end,
 				contextElement = node,
 			}
 			else node
 
 		position.refs.setReference(positionReference :: RT)
-	end, {})
+	end, { position.refs })
 
 	local refs = React.useMemo(function()
 		return merge(position.refs, {

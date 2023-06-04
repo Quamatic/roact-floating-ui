@@ -29,7 +29,7 @@ local function size(options: Options): Middleware
 			local placement = state.placement
 			local apply = options.apply or defaultApply
 
-			local overflow = detectOverflow(state, {})
+			local overflow = detectOverflow(state, options :: any)
 			local side = getSide(placement)
 			local alignment = getAlignment(placement)
 			local axis = getMainAxisFromPlacement(placement)

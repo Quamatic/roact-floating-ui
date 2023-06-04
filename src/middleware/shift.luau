@@ -24,7 +24,7 @@ local getMainAxisFromPlacement = require(script.Parent.Parent.utils.getMainAxisF
 
 local defaultLimiter: Limiter = {
 	fn = function(state)
-		return state.position
+		return { x = state.x, y = state.y }
 	end,
 }
 
@@ -49,7 +49,8 @@ local function shift(options: Options): Middleware
 			local limiter = options.limiter or defaultLimiter
 
 			local coords = { x = x, y = y }
-			local overflow = detectOverflow(state, {})
+			local overflow = detectOverflow(state, options :: any)
+
 			local mainAxis = getMainAxisFromPlacement(getSide(placement))
 			local crossAxis = getCrossAxis(mainAxis)
 
@@ -57,8 +58,8 @@ local function shift(options: Options): Middleware
 			local crossAxisCoord = coords[crossAxis]
 
 			if checkMainAxis then
-				local minSide = if mainAxis == "Y" then "top" else "left"
-				local maxSide = if mainAxis == "Y" then "bottom" else "right"
+				local minSide = if mainAxis == "y" then "top" else "left"
+				local maxSide = if mainAxis == "y" then "bottom" else "right"
 
 				local min = math.floor(mainAxisCoord + overflow[minSide])
 				local max = math.floor(mainAxisCoord - overflow[maxSide])
@@ -67,8 +68,8 @@ local function shift(options: Options): Middleware
 			end
 
 			if checkCrossAxis then
-				local minSide = if crossAxis == "Y" then "top" else "left"
-				local maxSide = if crossAxis == "Y" then "bottom" else "right"
+				local minSide = if crossAxis == "y" then "top" else "left"
+				local maxSide = if crossAxis == "y" then "bottom" else "right"
 				local min = crossAxisCoord + overflow[minSide]
 				local max = crossAxisCoord - overflow[maxSide]
 
@@ -80,13 +81,12 @@ local function shift(options: Options): Middleware
 				[crossAxis] = crossAxisCoord,
 			}))
 
-			return {
-				position = limitedCoords,
+			return merge(limitedCoords, {
 				data = {
-					x = limitedCoords.X - x,
-					y = limitedCoords.Y - y,
+					x = limitedCoords.x - x,
+					y = limitedCoords.y - y,
 				},
-			}
+			})
 		end,
 	}
 end

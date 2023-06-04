@@ -11,6 +11,7 @@ export type Options = {
 local getAlignment = require(script.Parent.Parent.utils.getAlignment)
 local getMainAxisFromPlacement = require(script.Parent.Parent.utils.getMainAxisFromPlacement)
 local getLengthFromAxis = require(script.Parent.Parent.utils.getLengthFromAxis)
+local getBoundingClientRect = require(script.Parent.Parent.utils.getBoundingClientRect)
 local getSideObjectFromPadding = require(script.Parent.Parent.utils.getSideObjectFromPadding)
 
 --[=[
@@ -37,6 +38,14 @@ local function arrow(options: Options): Middleware
 			local element = options.element
 			local padding = options.padding or 0
 
+			if type(element) == "table" then
+				if element.current ~= nil then
+					element = element.current
+				else
+					return {}
+				end
+			end
+
 			if element == nil then
 				return {}
 			end
@@ -45,7 +54,7 @@ local function arrow(options: Options): Middleware
 			local coords = { x = x, y = y }
 			local axis = getMainAxisFromPlacement(placement)
 			local length = getLengthFromAxis(axis)
-			local arrowDimensions = {} -- TODO: getDimensions OR getBoundingClientRect
+			local arrowDimensions = getBoundingClientRect(element) -- TODO: getDimensions OR getBoundingClientRect
 			local isYAxis = axis == "y"
 			local minProp = if isYAxis then "top" else "left"
 			local maxProp = if isYAxis then "bottom" else "right"

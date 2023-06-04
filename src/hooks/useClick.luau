@@ -8,6 +8,9 @@ type UseClickProps = {
 	toggle: boolean?,
 }
 
+--[=[
+	@within Hooks
+]=]
 local function useClick<RT>(context: FloatingContext<RT>, props: UseClickProps)
 	props = props or {} :: UseClickProps
 
@@ -34,13 +37,7 @@ local function useClick<RT>(context: FloatingContext<RT>, props: UseClickProps)
 						return
 					end
 
-					if open then
-						if toggle then
-							onOpenChange(false)
-						end
-					else
-						onOpenChange(true)
-					end
+					onOpenChange(if open then false else true)
 				end,
 			},
 		}

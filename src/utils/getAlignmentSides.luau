@@ -2,7 +2,11 @@ local getAlignment = require(script.Parent.getAlignment)
 local getMainAxisFromPlacement = require(script.Parent.getMainAxisFromPlacement)
 local getOppositePlacement = require(script.Parent.getOppositePlacement)
 
-local function getAlignmentSides(placement, rects)
+local types = require(script.Parent.Parent.types)
+type Placement = types.Placement
+type ElementRects = types.ElementRects
+
+local function getAlignmentSides(placement: Placement, rects: ElementRects)
 	local alignment = getAlignment(placement)
 	local mainAxis = getMainAxisFromPlacement(placement)
 
