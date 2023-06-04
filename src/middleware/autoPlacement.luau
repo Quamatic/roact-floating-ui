@@ -14,7 +14,6 @@ export type Options = {
 }
 
 local enums = require(script.Parent.Parent.enums)
-local sides = enums.sides
 local allPlacements = enums.allPlacements
 
 local getSide = require(script.Parent.Parent.utils.getSide)
