@@ -1,13 +1,6 @@
 {
-  "name": "roact-popper",
+  "name": "floating-ui",
   "tree": {
-      "$className": "DataModel",
-      "ReplicatedStorage": {
-          "$className": "ReplicatedStorage",
-          "$path": "Packages",
-          "RoactPopper": {
-              "$path": "src"
-          }
-      }
+    "$path": "src"
   }
 }
