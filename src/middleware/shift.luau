@@ -1,4 +1,7 @@
-local Array = require(script.Parent.Parent.Parent.Collections).Array
+local src = script.Parent.Parent.Parent
+local LuauPolyfill = require(src.LuauPolyfill)
+local Array = LuauPolyfill.Array
+local Object = LuauPolyfill.Object
 
 local types = require(script.Parent.Parent.types)
 
@@ -17,7 +20,6 @@ export type Options = {
 }
 
 local detectOverflow = require(script.Parent.Parent.detectOverflow)
-local merge = require(script.Parent.Parent.utils.merge)
 local getSide = require(script.Parent.Parent.utils.getSide)
 local getCrossAxis = require(script.Parent.Parent.utils.getCrossAxis)
 local getMainAxisFromPlacement = require(script.Parent.Parent.utils.getMainAxisFromPlacement)
@@ -76,12 +78,12 @@ local function shift(options: Options): Middleware
 				crossAxisCoord = within(min, crossAxisCoord, max)
 			end
 
-			local limitedCoords = limiter.fn(merge(state, {
+			local limitedCoords = limiter.fn(Object.assign({}, state, {
 				[mainAxis] = mainAxisCoord,
 				[crossAxis] = crossAxisCoord,
 			}))
 
-			return merge(limitedCoords, {
+			return Object.assign({}, limitedCoords, {
 				data = {
 					x = limitedCoords.x - x,
 					y = limitedCoords.y - y,
@@ -129,7 +131,7 @@ local function limitShift(options: LimitShiftOptions): {
 			local rawOffset = if type(offset) == "function" then offset(state) else offset
 			local computedOffset = if type(rawOffset) == "number"
 				then { mainAxis = rawOffset, crossAxis = 0 }
-				else merge({ mainAxis = 0, crossAxis = 0 }, rawOffset)
+				else Object.assign({ mainAxis = 0, crossAxis = 0 }, rawOffset)
 
 			if checkMainAxis then
 				local len = if mainAxis == "y" then "height" else "width"

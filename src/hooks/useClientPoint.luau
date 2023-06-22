@@ -1,6 +1,7 @@
 local UserInputService = game:GetService("UserInputService")
 
-local React = require(script.Parent.Parent.Parent.React)
+local src = script.Parent.Parent.Parent
+local React = require(src.React)
 
 local useEffectEvent = require(script.Parent.utils.useEffectEvent)
 local getBoundingClientRect = require(script.Parent.Parent.utils.getAlignment)
@@ -78,29 +79,44 @@ type UseClientPointProps = {
 local function useClientPoint<RT>(context: FloatingContext<RT>, props: UseClientPointProps)
 	local open = context.open
 	local refs = context.refs
+	local floating = context.elements.floating
 	local enabled = props.enabled or true
 	local axis = props.axis or "both"
+	local x = props.x
+	local y = props.y
 
-	local addListener = React.useCallback(function()
-		local function handleMouseMove(input: InputObject)
-			if input.UserInputType ~= Enum.UserInputType.MouseMovement then
-				return
-			end
-		end
-
-		local connection = UserInputService.InputBegan:Connect(handleMouseMove)
-		return function()
-			connection:Disconnect()
-		end
-	end, {})
+	local initialRef = React.useRef(false)
 
 	local setReference = useEffectEvent(function(x: number | nil, y: number | nil)
+		if initialRef.current then
+			return
+		end
+
 		refs.setPositionReference(createVirtualElement(refs.reference, {
 			x = x,
 			y = y,
 			axis = axis,
 		}))
 	end)
+
+	local addListener = React.useCallback(function()
+		if not enabled or x ~= nil or y ~= nil then
+			return
+		end
+
+		local function handleMouseMove(input: InputObject)
+			if input.UserInputType ~= Enum.UserInputType.MouseMovement then
+				return
+			end
+
+			refs.setPositionReference(refs.reference.current)
+		end
+
+		local connection = UserInputService.InputBegan:Connect(handleMouseMove)
+		return function()
+			connection:Disconnect()
+		end
+	end, { enabled, refs, setReference, x, y })
 
 	local handleReferenceEnterOrMove = useEffectEvent(function(_rbx: GuiObject, input: InputObject)
 		if
@@ -115,7 +131,34 @@ local function useClientPoint<RT>(context: FloatingContext<RT>, props: UseClient
 		end
 	end)
 
+	React.useEffect(function()
+		return addListener()
+	end, { addListener })
+
+	React.useEffect(function()
+		if enabled and not floating then
+			initialRef.current = false
+		end
+	end, { enabled, floating })
+
+	React.useEffect(function()
+		if not enabled and open then
+			initialRef.current = true
+		end
+	end, { enabled, open })
+
+	React.useLayoutEffect(function()
+		if enabled and (x ~= nil or y ~= nil) then
+			initialRef.current = false
+			setReference(x, y)
+		end
+	end, { enabled, x, y, setReference })
+
 	return React.useMemo(function()
+		if not enabled then
+			return {}
+		end
+
 		return {
 			reference = {
 				[React.Event.InputBegan] = handleReferenceEnterOrMove,

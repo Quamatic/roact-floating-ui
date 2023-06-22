@@ -1,5 +1,8 @@
 local RunService = game:GetService("RunService")
-local Array = require(script.Parent.Parent.Collections).Array
+
+local src = script.Parent.Parent
+local LuauPolyfill = require(src.LuauPolyfill)
+local Array = LuauPolyfill.Array
 
 local getBoundingClientRect = require(script.Parent.utils.getBoundingClientRect)
 
@@ -44,9 +47,9 @@ local function autoUpdate(reference: GuiObject, floating: GuiObject, update: () 
 		table.insert(connections, floating:GetPropertyChangedSignal("AbsoluteSize"):Connect(update))
 	end
 
-	local prevRefRect = if animationFrame then getBoundingClientRect(reference) else nil
-
 	if animationFrame then
+		local prevRefRect = getBoundingClientRect(reference)
+
 		RunService:BindToRenderStep(
 			`floating_auto_update_{animationFrameId}`,
 			Enum.RenderPriority.Camera.Value - 1,

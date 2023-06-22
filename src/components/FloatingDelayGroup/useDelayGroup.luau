@@ -1,5 +1,7 @@
-local React = require(script.Parent.Parent.Parent.Parent.React)
-local Timers = require(script.Parent.Parent.Parent.Parent.Timers)
+local src = script.Parent.Parent.Parent.Parent
+local React = require(src.React)
+local LuauPolyfill = require(src.LuauPolyfill)
+local setTimeout, clearTimeout = LuauPolyfill.setTimeout, LuauPolyfill.clearTimeout
 
 local useDelayGroupContext = require(script.Parent.useDelayGroupContext)
 
@@ -52,9 +54,9 @@ local function useDelayGroup(context, options)
 
 		if not open and currentId == id then
 			if timeoutMs then
-				local timeout = Timers.setTimeout(unset, timeoutMs)
+				local timeout = setTimeout(unset, timeoutMs)
 				return function()
-					Timers.clearTimeout(timeout)
+					clearTimeout(timeout)
 				end
 			else
 				unset()

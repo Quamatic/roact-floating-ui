@@ -1,13 +1,15 @@
 [package]
 name = "quamatic/floating-ui"
-version = "1.0.0"
+description = "Floating elements implementation for React"
+version = "0.1.0"
+license = "MIT"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
-exclude = ["stories"]
+exclude = ["*"]
+include = ["src", "src/*", "wally.toml", "LICENSE", "README.md", "default.project.json"]
 
 [dependencies]
 React = "core-packages/react@17.0.1-rc.19"
 ReactRoblox = "core-packages/react-roblox@17.0.1-rc.19"
-Collections = "core-packages/collections@1.2.3"
-Timers = "jsdotlua/timers@1.2.3"
+LuauPolyfill = "jsdotlua/luau-polyfill@1.2.3"
 Promise = "evaera/promise@^4"

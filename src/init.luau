@@ -23,7 +23,6 @@ return table.freeze({
 	useDimiss = require(script.hooks.useDismiss),
 	useClientPoint = require(script.hooks.useClientPoint),
 	useTransitionStatus = require(script.hooks.useTransitionStatus),
-	useId = require(script.hooks.useId),
 
 	autoUpdate = require(script.autoUpdate),
 	computePosition = require(script.computePosition),

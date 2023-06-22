@@ -1,5 +1,7 @@
-local React = require(script.Parent.Parent.Parent.Parent.React)
-local Timers = require(script.Parent.Parent.Parent.Parent.Timers)
+local src = script.Parent.Parent.Parent.Parent
+local React = require(src.React)
+local LuauPolyfill = require(src.LuauPolyfill)
+local setTimeout, clearTimeout = LuauPolyfill.setTimeout, LuauPolyfill.clearTimeout
 
 local function useDelayUnmount(open: boolean, durationMs: number)
 	local isMounted, setIsMounted = React.useState(open)
@@ -10,9 +12,9 @@ local function useDelayUnmount(open: boolean, durationMs: number)
 
 	React.useEffect(function()
 		if not open then
-			local timeout = Timers.setTimeout(setIsMounted, durationMs, false)
+			local timeout = setTimeout(setIsMounted, durationMs, false)
 			return function()
-				Timers.clearTimeout(timeout)
+				clearTimeout(timeout)
 			end
 		end
 	end, { open, durationMs })

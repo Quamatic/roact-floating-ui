@@ -1,9 +1,11 @@
-local React = require(script.Parent.Parent.Parent.React)
-local Timers = require(script.Parent.Parent.Parent.Timers)
+local src = script.Parent.Parent.Parent
+local React = require(src.React)
+local LuauPolyfill = require(src.LuauPolyfill)
+local Object = LuauPolyfill.Object
+local setTimeout, clearTimeout = LuauPolyfill.setTimeout, LuauPolyfill.clearTimeout
 
 local useLatestRef = require(script.Parent.utils.useLatestRef)
 local useFloatingTree = require(script.Parent.Parent.components.FloatingTree).useFloatingTree
-local merge = require(script.Parent.Parent.utils.merge)
 
 local types = require(script.Parent.Parent.types)
 type FloatingContext<RT> = types.FloatingContext<RT>
@@ -28,6 +30,7 @@ local function getDelay(value: Delay, prop: "open" | "close")
 end
 
 local function useHover<RT>(context: FloatingContext<RT>, props: UseHoverProps)
+	local open = context.open
 	local events = context.events
 	local onOpenChange = context.onOpenChange
 
@@ -35,15 +38,16 @@ local function useHover<RT>(context: FloatingContext<RT>, props: UseHoverProps)
 	local handleClose = props.handleClose or nil
 	local delay_ = props.delay or 0
 	local mouseOnly = not not props.mouseOnly
-	local restMs = props.mouseOnly or 0
-	local move = props.mouseOnly or true
+	local restMs = props.restMs or 0
+	local move = props.move or true
 
 	local tree = useFloatingTree()
-	local timeoutRef = React.useRef(nil) :: { current: thread? }
-	local restTimeoutRef = React.useRef(nil) :: { current: thread? }
+	local timeoutRef = React.useRef(nil :: thread?)
+	local restTimeoutRef = React.useRef(nil :: thread?)
 	local handleRef = React.useRef(nil)
 	local handleCloseRef = useLatestRef(handleClose)
 	local delayRef = useLatestRef(delay_)
+	local blockMouseMoveRef = React.useRef(false)
 
 	React.useEffect(function()
 		if not enabled then
@@ -51,8 +55,9 @@ local function useHover<RT>(context: FloatingContext<RT>, props: UseHoverProps)
 		end
 
 		local function onDismiss()
-			Timers.clearTimeout(timeoutRef.current)
-			Timers.clearTimeout(restTimeoutRef.current)
+			clearTimeout(timeoutRef.current)
+			clearTimeout(restTimeoutRef.current)
+			blockMouseMoveRef.current = true
 		end
 
 		events:on("dismiss", onDismiss)
@@ -67,11 +72,11 @@ local function useHover<RT>(context: FloatingContext<RT>, props: UseHoverProps)
 		local closeDelay = getDelay(delay_, "close")
 
 		if runElseBranch then
-			Timers.clearTimeout(timeoutRef.current)
+			clearTimeout(timeoutRef.current)
 			onOpenChange(false)
 		else
-			Timers.clearTimeout(timeoutRef.current)
-			timeoutRef.current = Timers.setTimeout(function()
+			clearTimeout(timeoutRef.current)
+			timeoutRef.current = setTimeout(function()
 				onOpenChange(false)
 			end, closeDelay)
 		end
@@ -79,8 +84,8 @@ local function useHover<RT>(context: FloatingContext<RT>, props: UseHoverProps)
 
 	React.useEffect(function()
 		return function()
-			Timers.clearTimeout(timeoutRef.current)
-			Timers.clearTimeout(restTimeoutRef.current)
+			clearTimeout(timeoutRef.current)
+			clearTimeout(restTimeoutRef.current)
 		end
 	end, { enabled })
 
@@ -100,11 +105,11 @@ local function useHover<RT>(context: FloatingContext<RT>, props: UseHoverProps)
 						return
 					end
 
-					Timers.clearTimeout(timeoutRef.current)
+					clearTimeout(timeoutRef.current)
 
 					local openDelay = getDelay(delayRef.current, "open")
 					if openDelay then
-						timeoutRef.current = Timers.setTimeout(function()
+						timeoutRef.current = setTimeout(function()
 							onOpenChange(true)
 						end, openDelay)
 					else
@@ -112,14 +117,14 @@ local function useHover<RT>(context: FloatingContext<RT>, props: UseHoverProps)
 					end
 				end,
 				[React.Event.InputEnded] = function(_rbx: Instance, input: InputObject)
-					Timers.clearTimeout(timeoutRef.current)
+					clearTimeout(timeoutRef.current)
 
 					if handleCloseRef.current then
 						if not context.open then
-							Timers.clearTimeout(timeoutRef.current)
+							clearTimeout(timeoutRef.current)
 						end
 
-						handleRef.current = handleCloseRef.current(merge(context, {
+						handleRef.current = handleCloseRef.current(Object.assign({}, context, {
 							tree = tree,
 							position = Vector2.new(input.Position.X, input.Position.Y),
 							onClose = function()
@@ -144,26 +149,31 @@ local function useHover<RT>(context: FloatingContext<RT>, props: UseHoverProps)
 						return
 					end
 
-					Timers.clearTimeout(restTimeoutRef.current)
-					restTimeoutRef.current = Timers.setTimeout(function()
-						onOpenChange(true)
+					clearTimeout(restTimeoutRef.current)
+					restTimeoutRef.current = setTimeout(function()
+						if not blockMouseMoveRef.current then
+							onOpenChange(true)
+						end
 					end, restMs)
 				end,
 			},
 			floating = {
 				[React.Event.MouseEnter] = function()
-					Timers.clearTimeout(timeoutRef.current)
+					clearTimeout(timeoutRef.current)
 				end,
 				[React.Event.MouseLeave] = function()
 					events:emit("dismiss", {
 						type = "mouseLeave",
+						data = {
+							returnFocus = false,
+						},
 					})
 
 					closeWithDelay(false)
 				end,
 			},
 		}
-	end, { enabled, restMs, context.open, context.onOpenChange })
+	end, { enabled, restMs, open, onOpenChange })
 end
 
 return useHover

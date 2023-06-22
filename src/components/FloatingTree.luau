@@ -1,7 +1,8 @@
-local React = require(script.Parent.Parent.Parent.React)
-local Array = require(script.Parent.Parent.Parent.Collections).Array
+local src = script.Parent.Parent.Parent
+local React = require(src.React)
+local LuauPolyfill = require(src.LuauPolyfill)
+local Array = LuauPolyfill.Array
 
-local useId = require(script.Parent.Parent.hooks.useId)
 local createPubSub = require(script.Parent.Parent.utils.createPubSub)
 
 local e = React.createElement
@@ -18,21 +19,20 @@ local function useFloatingTree()
 end
 
 local function useFloatingNodeId(customParentId: string?)
-	local id = useId()
 	local tree = useFloatingTree()
 	local reactParentId = useFloatingParentNodeId()
 	local parentId = customParentId or reactParentId
 
 	React.useLayoutEffect(function()
-		local node = { id = id, parentId = parentId }
+		local node = { parentId = parentId }
 		tree.addNode(node)
 
 		return function()
 			tree.removeNode(node)
 		end
-	end, { tree, id, parentId })
+	end, { tree, parentId })
 
-	return id
+	return parentId
 end
 
 type FloatingNodeProps = {

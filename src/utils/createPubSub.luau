@@ -1,5 +1,6 @@
-local Collections = require(script.Parent.Parent.Parent.Collections)
-local Map, Array = Collections.Map, Collections.Array
+local src = script.Parent.Parent.Parent
+local LuauPolyfill = require(src.LuauPolyfill)
+local Map, Array = LuauPolyfill.Map, LuauPolyfill.Array
 
 local types = require(script.Parent.Parent.types)
 type FloatingEvents = types.FloatingEvents

@@ -3,11 +3,6 @@
 registry = "test"
 
 [[package]]
-name = "chriscerie/react-spring"
-version = "1.1.5"
-dependencies = [["Promise", "evaera/promise@4.0.0"], ["React", "core-packages/react@17.0.1-rc.19"], ["ReactRoblox", "core-packages/react-roblox@17.0.1-rc.19"], ["TestEZ", "roblox/testez@0.4.1"]]
-
-[[package]]
 name = "core-packages/boolean"
 version = "1.2.3"
 dependencies = [["Number", "core-packages/number@1.2.3"]]
@@ -93,9 +88,19 @@ version = "4.0.0"
 dependencies = []
 
 [[package]]
+name = "jsdotlua/boolean"
+version = "1.2.3"
+dependencies = [["Number", "jsdotlua/number@1.2.3"]]
+
+[[package]]
 name = "jsdotlua/collections"
 version = "1.2.3"
 dependencies = [["ES7Types", "jsdotlua/es7-types@1.2.3"], ["InstanceOf", "jsdotlua/instance-of@1.2.3"]]
+
+[[package]]
+name = "jsdotlua/console"
+version = "1.2.3"
+dependencies = [["Collections", "jsdotlua/collections@1.2.3"]]
 
 [[package]]
 name = "jsdotlua/es7-types"
@@ -108,16 +113,36 @@ version = "1.2.3"
 dependencies = []
 
 [[package]]
+name = "jsdotlua/luau-polyfill"
+version = "1.2.3"
+dependencies = [["Boolean", "jsdotlua/boolean@1.2.3"], ["Collections", "jsdotlua/collections@1.2.3"], ["Console", "jsdotlua/console@1.2.3"], ["ES7Types", "jsdotlua/es7-types@1.2.3"], ["InstanceOf", "jsdotlua/instance-of@1.2.3"], ["Math", "jsdotlua/math@1.2.3"], ["Number", "jsdotlua/number@1.2.3"], ["String", "jsdotlua/string@1.2.3"], ["Symbol", "jsdotlua/symbol@1.0.0"], ["Timers", "jsdotlua/timers@1.2.3"]]
+
+[[package]]
+name = "jsdotlua/math"
+version = "1.2.3"
+dependencies = []
+
+[[package]]
+name = "jsdotlua/number"
+version = "1.2.3"
+dependencies = []
+
+[[package]]
+name = "jsdotlua/string"
+version = "1.2.3"
+dependencies = [["ES7Types", "jsdotlua/es7-types@1.2.3"], ["Number", "jsdotlua/number@1.2.3"]]
+
+[[package]]
+name = "jsdotlua/symbol"
+version = "1.0.0"
+dependencies = []
+
+[[package]]
 name = "jsdotlua/timers"
 version = "1.2.3"
 dependencies = [["Collections", "jsdotlua/collections@1.2.3"]]
 
 [[package]]
 name = "quamatic/floating-ui"
-version = "1.0.0"
-dependencies = [["Collections", "core-packages/collections@1.2.3"], ["Promise", "evaera/promise@4.0.0"], ["React", "core-packages/react@17.0.1-rc.19"], ["ReactRoblox", "core-packages/react-roblox@17.0.1-rc.19"], ["ReactSpring", "chriscerie/react-spring@1.1.5"], ["Timers", "jsdotlua/timers@1.2.3"]]
-
-[[package]]
-name = "roblox/testez"
-version = "0.4.1"
-dependencies = []
+version = "0.1.0"
+dependencies = [["LuauPolyfill", "jsdotlua/luau-polyfill@1.2.3"], ["Promise", "evaera/promise@4.0.0"], ["React", "core-packages/react@17.0.1-rc.19"], ["ReactRoblox", "core-packages/react-roblox@17.0.1-rc.19"]]

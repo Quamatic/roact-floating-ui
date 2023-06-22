@@ -1,4 +1,6 @@
-local Array = require(script.Parent.Parent.Parent.Collections).Array
+local src = script.Parent.Parent.Parent
+local LuauPolyfill = require(src.LuauPolyfill)
+local Array = LuauPolyfill.Array
 
 local types = require(script.Parent.Parent.types)
 type Placement = types.Placement

@@ -1,6 +1,7 @@
-local React = require(script.Parent.Parent.Parent.Parent.React)
-
-local merge = require(script.Parent.Parent.Parent.utils.merge)
+local src = script.Parent.Parent.Parent.Parent
+local React = require(src.React)
+local LuauPolyfill = require(src.LuauPolyfill)
+local Object = LuauPolyfill.Object
 
 local FloatingDelayGroupContext = require(script.Parent["FloatingDelayGroup.context"])
 type GroupState = FloatingDelayGroupContext.GroupState
@@ -21,7 +22,7 @@ local function FloatingDelayGroup(props: FloatingDelayGroupProps)
 	local timeoutMs = props.timeoutMs or 0
 
 	local state, setState = React.useReducer(function(prev: GroupState, next_: GroupState): GroupState
-		return merge(prev, next_)
+		return Object.assign({}, prev, next_)
 	end, {
 		delay = delay,
 		timeoutMs = timeoutMs,
@@ -52,7 +53,7 @@ local function FloatingDelayGroup(props: FloatingDelayGroupProps)
 
 	return e(FloatingDelayGroupContext.Provider, {
 		value = React.useMemo(function()
-			return merge(state, {
+			return Object.assign({}, state, {
 				setState = setState,
 				setCurrentId = setCurrentId,
 			})

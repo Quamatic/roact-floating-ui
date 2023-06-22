@@ -1,7 +1,9 @@
 local React = require(script.Parent.Parent.Parent.React)
-local LuauPolyfill = require(script.Parent.Parent.Parent.Collections)
+local src = script.Parent.Parent.Parent
+local LuauPolyfill = require(src.LuauPolyfill)
 
 local Array, Object, Map = LuauPolyfill.Array, LuauPolyfill.Object, LuauPolyfill.Map
+local String = LuauPolyfill.String
 
 local function mergeProps(userProps, propsList, elementKey)
 	local map = Map.new()
@@ -25,7 +27,29 @@ local function mergeProps(userProps, propsList, elementKey)
 					local key = entry[1]
 					local value = entry[2]
 
-					acc[key] = value
+					if String.indexOf(tostring(key), "RoactHost") == 1 then
+						if not map:has(key) then
+							map:set(key, {})
+						end
+
+						if typeof(value) == "function" then
+							table.insert(map:get(key), value)
+
+							acc[key] = function(...: unknown)
+								local args = { ... }
+								return Array.find(
+									Array.map(map:get(key), function(fn)
+										return fn(unpack(args))
+									end),
+									function(val)
+										return val ~= nil
+									end
+								)
+							end
+						end
+					else
+						acc[key] = value
+					end
 				end)
 
 				return acc

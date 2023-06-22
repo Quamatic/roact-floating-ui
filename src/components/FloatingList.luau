@@ -1,7 +1,8 @@
-local React = require(script.Parent.Parent.Parent.React)
-local Collections = require(script.Parent.Parent.Parent.Collections)
+local src = script.Parent.Parent.Parent
+local React = require(src.React)
+local LuauPolyfill = require(src.LuauPolyfill)
 
-local Array, Map = Collections.Array, Collections.Map
+local Array, Map = LuauPolyfill.Array, LuauPolyfill.Map
 
 type Node = GuiBase2d
 

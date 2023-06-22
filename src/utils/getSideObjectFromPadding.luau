@@ -1,4 +1,6 @@
-local Object = require(script.Parent.Parent.Parent.Collections).Object
+local src = script.Parent.Parent.Parent
+local LuauPolyfill = require(src.LuauPolyfill)
+local Object = LuauPolyfill.Object
 
 local types = require(script.Parent.Parent.types)
 type Padding = types.Padding

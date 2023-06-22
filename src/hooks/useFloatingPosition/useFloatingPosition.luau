@@ -1,8 +1,10 @@
-local React = require(script.Parent.Parent.Parent.Parent.React)
+local src = script.Parent.Parent.Parent.Parent
+local React = require(src.React)
+local LuauPolyfill = require(src.LuauPolyfill)
+local Object = LuauPolyfill.Object
 
 local deepEqual = require(script.Parent.deepEqual)
 local roundByDPR = require(script.Parent.roundByDPR)
-local merge = require(script.Parent.Parent.Parent.utils.merge)
 local computePosition = require(script.Parent.Parent.Parent.computePosition)
 local useLatestRef = require(script.Parent.Parent.utils.useLatestRef)
 
@@ -68,7 +70,7 @@ local function useFloating<RT>(options: UseFloatingOptions<RT>): UseFloatingRetu
 		if open == false and dataRef.current.isPositioned then
 			dataRef.current.isPositioned = false
 			setData(function(data)
-				return merge(data, { isPositioned = false })
+				return Object.assign({}, data, { isPositioned = false })
 			end)
 		end
 	end, { open })
@@ -92,7 +94,7 @@ local function useFloating<RT>(options: UseFloatingOptions<RT>): UseFloatingRetu
 		}
 
 		local data = computePosition(referenceRef.current, floatingRef.current, config)
-		local fullData = merge(data, { isPositioned = true })
+		local fullData = Object.assign({}, data, { isPositioned = true })
 
 		if isMountedRef.current and not deepEqual(dataRef.current, fullData) then
 			dataRef.current = fullData
@@ -153,7 +155,7 @@ local function useFloating<RT>(options: UseFloatingOptions<RT>): UseFloatingRetu
 	end, { data.x, data.y, elements.floating })
 
 	return React.useMemo(function()
-		return merge(data, {
+		return Object.assign({}, data, {
 			update = update,
 			refs = refs,
 			elements = elements,

@@ -25,7 +25,6 @@ export type Options = {
 
 --[=[
 	@within FloatingUI
-	@unreleased
 
 	This function computes the overflow offsets of either the reference or floating element relative to any clipping boundaries.
 	Almost every middleware provided by the library uses this function, making it useful for your own custom middleware.
