@@ -26,7 +26,11 @@ local getSideObjectFromPadding = require(script.Parent.Parent.utils.getSideObjec
 	If you’re using React, the FloatingArrow component renders out a customizable arrow element and applies the positioning styles for you.
 	:::
 ]=]
-local function arrow(options: Options): Middleware
+local function arrow(options: Options?): Middleware
+	if options == nil then
+		options = {} :: Options
+	end
+
 	return {
 		name = "arrow",
 		options = options,
@@ -35,8 +39,8 @@ local function arrow(options: Options): Middleware
 			local y = state.y
 			local placement = state.placement
 			local rects = state.rects
-			local element = options.element
-			local padding = options.padding or 0
+			local element = (options :: Options).element
+			local padding = (options :: Options).padding or 0
 
 			if type(element) == "table" then
 				if element.current ~= nil then

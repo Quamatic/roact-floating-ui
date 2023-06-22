@@ -37,7 +37,11 @@ end
 --[=[
 	@within Middleware
 ]=]
-local function shift(options: Options): Middleware
+local function shift(options: Options?): Middleware
+	if options == nil then
+		options = {} :: Options
+	end
+
 	return {
 		name = "shift",
 		options = options,
@@ -46,12 +50,17 @@ local function shift(options: Options): Middleware
 			local y = state.y
 			local placement = state.placement
 
-			local checkMainAxis = options.mainAxis or true
-			local checkCrossAxis = options.crossAxis or false
-			local limiter = options.limiter or defaultLimiter
+			local checkMainAxis = (options :: Options).mainAxis or true
+			local checkCrossAxis = (options :: Options).crossAxis or false
+			local limiter = (options :: Options).limiter or defaultLimiter
+			local detectOverflowOptions = Object.assign({}, options, {
+				mainAxis = Object.None,
+				crossAxis = Object.None,
+				limiter = Object.None,
+			})
 
 			local coords = { x = x, y = y }
-			local overflow = detectOverflow(state, options :: any)
+			local overflow = detectOverflow(state, detectOverflowOptions)
 
 			local mainAxis = getMainAxisFromPlacement(getSide(placement))
 			local crossAxis = getCrossAxis(mainAxis)

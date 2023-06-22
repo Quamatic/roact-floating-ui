@@ -1,6 +1,7 @@
 local src = script.Parent.Parent.Parent
 local LuauPolyfill = require(src.LuauPolyfill)
 local Array = LuauPolyfill.Array
+local Object = LuauPolyfill.Object
 
 local enums = require(script.Parent.Parent.enums)
 local sides = enums.sides
@@ -36,19 +37,32 @@ end
 --[=[
 	@within Middleware
 ]=]
-local function hide(options: Options): Middleware
+local function hide(options: Options?): Middleware
+	if options == nil then
+		options = {} :: Options
+	end
+
 	return {
 		name = "hide",
 		options = options,
 		fn = function(state)
-			local strategy = options.strategy or "referenceHidden"
+			local strategy = (options :: Options).strategy or "referenceHidden"
+			local detectOverflowOptions = Object.assign({}, options, {
+				strategy = Object.None,
+			})
+
 			local rects = state.rects
 
 			if strategy == "referenceHidden" then
-				local overflow = detectOverflow(state, {
-					elementContext = "reference",
-				})
+				local overflow = detectOverflow(
+					state,
+					Object.assign({}, detectOverflowOptions, {
+						elementContext = "reference",
+					})
+				)
+
 				local offsets = getSideOffsets(overflow, rects.reference)
+
 				return {
 					data = {
 						referenceHiddenOffsets = offsets,
@@ -56,10 +70,15 @@ local function hide(options: Options): Middleware
 					},
 				}
 			elseif strategy == "escaped" then
-				local overflow = detectOverflow(state, {
-					altBoundary = true,
-				})
+				local overflow = detectOverflow(
+					state,
+					Object.assign({}, detectOverflowOptions, {
+						altBoundary = true,
+					})
+				)
+
 				local offsets = getSideOffsets(overflow, rects.floating)
+
 				return {
 					data = {
 						escapedOffsets = offsets,

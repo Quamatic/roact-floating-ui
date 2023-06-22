@@ -1,6 +1,7 @@
 local src = script.Parent.Parent.Parent
 local LuauPolyfill = require(src.LuauPolyfill)
 local Array = LuauPolyfill.Array
+local Object = LuauPolyfill.Object
 
 local types = require(script.Parent.Parent.types)
 
@@ -22,11 +23,10 @@ local getSide = require(script.Parent.Parent.utils.getSide)
 local getAlignment = require(script.Parent.Parent.utils.getAlignment)
 local getAlignmentSides = require(script.Parent.Parent.utils.getAlignmentSides)
 local detectOverflow = require(script.Parent.Parent.detectOverflow)
-local merge = require(script.Parent.Parent.utils.merge)
 
 local function getPlacementList(alignment: string | nil, autoAlignment: boolean, allowedPlacements: { Placement })
 	local allowedPlacementsSortedByAlignment = if alignment
-		then merge(
+		then Array.concat(
 			Array.filter(allowedPlacements, function(placement)
 				return getAlignment(placement) == alignment
 			end),
@@ -50,7 +50,11 @@ end
 --[=[
 	@within Middleware
 ]=]
-local function autoPlacement(options: Options): Middleware
+local function autoPlacement(options: Options?): Middleware
+	if options == nil then
+		options = {} :: Options
+	end
+
 	return {
 		name = "autoPlacement",
 		options = options,
@@ -58,16 +62,22 @@ local function autoPlacement(options: Options): Middleware
 			local middlewareData = state.middlewareData
 			local placement = state.placement
 
-			local crossAxis = options.crossAxis or false
-			local alignment = options.alignment
-			local allowedPlacements = options.allowedPlacements or allPlacements
-			local autoAlignment = options.autoAlignment or true
+			local crossAxis = (options :: Options).crossAxis or false
+			local alignment = (options :: Options).alignment
+			local allowedPlacements = (options :: Options).allowedPlacements or allPlacements
+			local autoAlignment = (options :: Options).autoAlignment or true
+			local detectOverflowOptions = Object.assign({}, options, {
+				crossAxis = Object.None,
+				alignment = Object.None,
+				allowedPlacements = Object.None,
+				autoAlignment = Object.None,
+			})
 
 			local placements = if alignment ~= nil or allowedPlacements == allPlacements
 				then getPlacementList(alignment, autoAlignment, allowedPlacements)
 				else allowedPlacements
 
-			local overflow = detectOverflow(state, {})
+			local overflow = detectOverflow(state, detectOverflowOptions)
 
 			local currentIndex = (middlewareData.autoPlacement and middlewareData.autoPlacement.index) or 1
 			local currentPlacement = placements[currentIndex]

@@ -56,7 +56,7 @@ end
 --[=[
 	@within Middleware
 ]=]
-local function offset(value: Options): Middleware
+local function offset(value: Options?): Middleware
 	value = value or 0
 
 	return {
@@ -65,7 +65,7 @@ local function offset(value: Options): Middleware
 		fn = function(state)
 			local x = state.x
 			local y = state.y
-			local diffCoords = convertValueToCoords(state, value)
+			local diffCoords = convertValueToCoords(state, value :: Options)
 
 			return {
 				x = x + diffCoords.x,

@@ -1,6 +1,7 @@
 local src = script.Parent.Parent.Parent
 local LuauPolyfill = require(src.LuauPolyfill)
 local Array = LuauPolyfill.Array
+local Object = LuauPolyfill.Object
 
 local types = require(script.Parent.Parent.types)
 
@@ -26,7 +27,11 @@ local getOppositeAxisPlacements = require(script.Parent.Parent.utils.getOpposite
 --[=[
 	@within Middleware
 ]=]
-local function flip(options: Options): Middleware
+local function flip(options: Options?): Middleware
+	if options == nil then
+		options = {} :: Options
+	end
+
 	return {
 		name = "flip",
 		options = options,
@@ -35,12 +40,20 @@ local function flip(options: Options): Middleware
 			local initialPlacement = state.initialPlacement
 			local middlewareData = state.middlewareData
 
-			local checkMainAxis = options.mainAxis or true
-			local checkCrossAxis = options.crossAxis or true
-			local specifiedFallbackPlacements = options.fallbackPlacements
-			local flipAlignment = options.flipAlignment or true
-			local fallbackAxixSideDirection = options.fallbackAxisSideDirection or "none"
-			local fallbackStrategy = options.fallbackStrategy or "bestFit"
+			local checkMainAxis = (options :: Options).mainAxis or true
+			local checkCrossAxis = (options :: Options).crossAxis or true
+			local specifiedFallbackPlacements = (options :: Options).fallbackPlacements
+			local flipAlignment = (options :: Options).flipAlignment or true
+			local fallbackAxixSideDirection = (options :: Options).fallbackAxisSideDirection or "none"
+			local fallbackStrategy = (options :: Options).fallbackStrategy or "bestFit"
+			local detectOverflowOptions = Object.assign({}, options, {
+				mainAxis = Object.None,
+				crossAxis = Object.None,
+				fallbackPlacements = Object.None,
+				flipAlignment = Object.None,
+				fallbackAxixSideDirection = Object.None,
+				fallbackStrategy = Object.None,
+			})
 
 			local side = getSide(placement)
 			local isBasePlacement = getSide(initialPlacement) == placement
@@ -62,7 +75,7 @@ local function flip(options: Options): Middleware
 
 			local placements = { initialPlacement, unpack(fallbackPlacements) }
 
-			local overflow = detectOverflow(state, options :: any)
+			local overflow = detectOverflow(state, detectOverflowOptions)
 			local overflows = {}
 			local overflowsData = if middlewareData.flip then middlewareData.flip.overflows else {}
 

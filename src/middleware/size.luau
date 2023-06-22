@@ -1,3 +1,7 @@
+local src = script.Parent.Parent.Parent
+local LuauPolyfill = require(src.LuauPolyfill)
+local Object = LuauPolyfill.Object
+
 local types = require(script.Parent.Parent.types)
 
 type Middleware = types.Middleware
@@ -12,7 +16,6 @@ export type Options = {
 	apply: ApplyFn,
 }
 
-local merge = require(script.Parent.Parent.utils.merge)
 local getSide = require(script.Parent.Parent.utils.getSide)
 local getAlignment = require(script.Parent.Parent.utils.getAlignment)
 local getMainAxisFromPlacement = require(script.Parent.Parent.utils.getMainAxisFromPlacement)
@@ -20,16 +23,23 @@ local detectOverflow = require(script.Parent.Parent.detectOverflow)
 
 local defaultApply = function() end
 
-local function size(options: Options): Middleware
+local function size(options: Options?): Middleware
+	if options == nil then
+		options = {} :: Options
+	end
+
 	return {
 		name = "size",
 		options = options,
 		fn = function(state)
 			local rects = state.rects
 			local placement = state.placement
-			local apply = options.apply or defaultApply
+			local apply = (options :: Options).apply or defaultApply
+			local detectOverflowOptions = Object.assign({}, options, {
+				apply = Object.None,
+			})
 
-			local overflow = detectOverflow(state, options :: any)
+			local overflow = detectOverflow(state, detectOverflowOptions)
 			local side = getSide(placement)
 			local alignment = getAlignment(placement)
 			local axis = getMainAxisFromPlacement(placement)
@@ -90,8 +100,7 @@ local function size(options: Options): Middleware
 				end
 			end
 
-			-- TODO: Make async?
-			apply(merge(state, {
+			apply(Object.assign({}, state, {
 				availableWidth = math.max(availableWidth, 0),
 				availableHeight = math.max(availableHeight, 0),
 			}))
