@@ -1,11 +1,15 @@
+local src = script.Parent.Parent
+local LuauPolyfill = require(src.LuauPolyfill)
+local Object = LuauPolyfill.Object
+
 local getSideObjectFromPadding = require(script.Parent.utils.getSideObjectFromPadding)
 local getClippingRect = require(script.Parent.utils.getClippingRect)
 local getLayerElement = require(script.Parent.utils.getLayerElement)
+local getScale = require(script.Parent.utils.getScale)
 local rectToClientRect = require(script.Parent.utils.rectToClientRect)
 local convertOffsetParentRelativeRectToViewportRelativeRect =
 	require(script.Parent.utils.convertOffsetParentRelativeRectToViewportRelativeRect)
 local isElement = require(script.Parent.utils.isElement)
-local merge = require(script.Parent.utils.merge)
 
 local types = require(script.Parent.types)
 
@@ -63,15 +67,21 @@ local function detectOverflow(state: MiddlewareState, options: Options)
 		rootBoundary = rootBoundary,
 	}))
 
-	local rect = if elementContext == "floating" then merge(rects.floating, { x = x, y = y }) else rects.reference
+	local rect = if elementContext == "floating"
+		then Object.assign({}, rects.floating, { x = x, y = y })
+		else rects.reference
+
+	local offsetParent = elements.floating.Parent
+	local scale = getScale(offsetParent)
+
 	local elementClientRect =
-		rectToClientRect(convertOffsetParentRelativeRectToViewportRelativeRect(rect, elements.floating.Parent))
+		rectToClientRect(convertOffsetParentRelativeRectToViewportRelativeRect(rect, offsetParent))
 
 	local overflows = {
-		top = clippingClientRect.top - elementClientRect.top + paddingObject.top,
-		bottom = elementClientRect.bottom - clippingClientRect.bottom + paddingObject.bottom,
-		left = clippingClientRect.left - elementClientRect.left + paddingObject.left,
-		right = elementClientRect.right - clippingClientRect.right + paddingObject.right,
+		top = (clippingClientRect.top - elementClientRect.top + paddingObject.top) / scale,
+		bottom = (elementClientRect.bottom - clippingClientRect.bottom + paddingObject.bottom) / scale,
+		left = (clippingClientRect.left - elementClientRect.left + paddingObject.left) / scale,
+		right = (elementClientRect.right - clippingClientRect.right + paddingObject.right) / scale,
 	}
 
 	return overflows

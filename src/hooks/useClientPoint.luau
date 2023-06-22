@@ -10,6 +10,7 @@ local types = require(script.Parent.Parent.types)
 type VirtualElement = types.VirtualElement
 type Element = types.Element
 type FloatingContext<RT> = types.FloatingContext<RT>
+type MutableRefObject<T> = { current: T }
 
 local dummyRect = {
 	width = 0,
@@ -19,7 +20,7 @@ local dummyRect = {
 }
 
 local function createVirtualElement(
-	rbxRef: React.ElementRef<{ current: Element? }>,
+	rbxRef: MutableRefObject<Element?>,
 	data: {
 		x: number,
 		y: number,
@@ -71,7 +72,7 @@ end
 
 type UseClientPointProps = {
 	enabled: boolean?,
-	axis: "X" | "Y" | "both"?,
+	axis: "x" | "y" | "both"?,
 	x: number?,
 	y: number?,
 }
