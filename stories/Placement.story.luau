@@ -2,9 +2,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local React = require(ReplicatedStorage.React)
 local ReactRoblox = require(ReplicatedStorage.ReactRoblox)
-local ReactSpring = require(ReplicatedStorage.ReactSpring)
-local FloatingUI = require(ReplicatedStorage.FloatingUI)
-local Array = require(ReplicatedStorage.Collections).Array
+local FloatingUI = require(ReplicatedStorage.ReactFloating)
+local Array = require(ReplicatedStorage.LuauPolyfill).Array
 
 local Chrome = require(script.Parent.Chrome)
 
@@ -75,11 +74,6 @@ local placements = {
 
 local function PlacementButton(props)
 	local hovered, setHovered = React.useState(false)
-	local styles = ReactSpring.useSpring({
-		scale = if hovered then 1.25 else 1,
-		config = { tension = 500, damping = 0.5 },
-	})
-
 	local selected = props.selected == props.placement
 
 	return e("ImageButton", {
@@ -95,10 +89,6 @@ local function PlacementButton(props)
 			setHovered(false)
 		end,
 	}, {
-		UIScale = e("UIScale", {
-			Scale = styles.scale,
-		}),
-
 		UICorner = e("UICorner", {
 			CornerRadius = UDim.new(1, 0),
 		}),
