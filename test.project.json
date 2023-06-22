@@ -5,7 +5,7 @@
         "ReplicatedStorage": {
             "$className": "ReplicatedStorage",
             "$path": "Packages",
-            "FloatingUI": {
+            "ReactFloating": {
                 "$path": "src"
             },
             "Stories": {

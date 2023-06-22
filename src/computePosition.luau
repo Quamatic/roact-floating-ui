@@ -1,13 +1,16 @@
+local src = script.Parent.Parent
+local LuauPolyfill = require(src.LuauPolyfill)
+local Object = LuauPolyfill.Object
+
 local computeCoordsFromPlacement = require(script.Parent.computeCoordsFromPlacement)
 local getElementRects = require(script.Parent.utils.getElementRects)
+local getScale = require(script.Parent.utils.getScale)
 
 local types = require(script.Parent.types)
 type Element = types.Element
 type ComputePositionConfig = types.ComputePositionConfig
 type ComputePositionReturn = types.ComputePositionReturn
 type MiddlewareData = types.MiddlewareData
-
-local merge = require(script.Parent.utils.merge)
 
 local MAX_RESET_COUNT = 50 -- some arbitrary amount that the actual library set. not sure why, but im using it anyway.
 
@@ -54,8 +57,8 @@ local function computePosition(
 		x = nextX or x
 		y = nextY or y
 
-		middlewareData = merge(middlewareData, {
-			[name] = merge(middlewareData[name], data),
+		middlewareData = Object.assign({}, middlewareData, {
+			[name] = Object.assign({}, middlewareData[name], data),
 		})
 
 		if reset and resetCount <= MAX_RESET_COUNT then
@@ -80,9 +83,11 @@ local function computePosition(
 		index += 1
 	end
 
+	local scale = getScale(floating)
+
 	return {
-		x = x,
-		y = y,
+		x = x * scale,
+		y = y * scale,
 		placement = statefulPlacement,
 		middlewareData = middlewareData,
 	}

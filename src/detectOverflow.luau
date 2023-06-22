@@ -5,7 +5,6 @@ local Object = LuauPolyfill.Object
 local getSideObjectFromPadding = require(script.Parent.utils.getSideObjectFromPadding)
 local getClippingRect = require(script.Parent.utils.getClippingRect)
 local getLayerElement = require(script.Parent.utils.getLayerElement)
-local getScale = require(script.Parent.utils.getScale)
 local rectToClientRect = require(script.Parent.utils.rectToClientRect)
 local convertOffsetParentRelativeRectToViewportRelativeRect =
 	require(script.Parent.utils.convertOffsetParentRelativeRectToViewportRelativeRect)
@@ -72,16 +71,14 @@ local function detectOverflow(state: MiddlewareState, options: Options)
 		else rects.reference
 
 	local offsetParent = elements.floating.Parent
-	local scale = getScale(offsetParent)
-
 	local elementClientRect =
 		rectToClientRect(convertOffsetParentRelativeRectToViewportRelativeRect(rect, offsetParent))
 
 	local overflows = {
-		top = (clippingClientRect.top - elementClientRect.top + paddingObject.top) / scale,
-		bottom = (elementClientRect.bottom - clippingClientRect.bottom + paddingObject.bottom) / scale,
-		left = (clippingClientRect.left - elementClientRect.left + paddingObject.left) / scale,
-		right = (elementClientRect.right - clippingClientRect.right + paddingObject.right) / scale,
+		top = (clippingClientRect.top - elementClientRect.top + paddingObject.top),
+		bottom = (elementClientRect.bottom - clippingClientRect.bottom + paddingObject.bottom),
+		left = (clippingClientRect.left - elementClientRect.left + paddingObject.left),
+		right = (elementClientRect.right - clippingClientRect.right + paddingObject.right),
 	}
 
 	return overflows

@@ -2,8 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local React = require(ReplicatedStorage.React)
 local ReactRoblox = require(ReplicatedStorage.ReactRoblox)
-local ReactSpring = require(ReplicatedStorage.ReactSpring)
-local FloatingUI = require(ReplicatedStorage.FloatingUI)
+local FloatingUI = require(ReplicatedStorage.ReactFloating)
 
 local Chrome = require(script.Parent.Chrome)
 
@@ -12,13 +11,6 @@ local e = React.createElement
 local function App(props: { target: Frame })
 	local open, setOpen = React.useState(false)
 	local boundary, setBoundary = React.useState(nil)
-
-	local styles = ReactSpring.useSpring({
-		scale = if open then 1 else 0,
-		opacity = if open then 0 else 1,
-		rotation = if open then 0 else -270,
-		config = ReactSpring.config.wobbly,
-	})
 
 	local floating = FloatingUI.useFloating({
 		placement = "top",
@@ -94,9 +86,6 @@ local function App(props: { target: Frame })
 					AnchorPoint = Vector2.new(0.5, 0.5),
 					Position = UDim2.fromScale(0.5, 0.5),
 					Size = UDim2.fromScale(1, 1),
-					BackgroundTransparency = styles.opacity,
-					TextTransparency = styles.opacity,
-					Rotation = styles.rotation,
 					BackgroundColor3 = Color3.fromRGB(39, 41, 53),
 					TextColor3 = Color3.fromHex("#ffffff"),
 					FontFace = Font.fromEnum(Enum.Font.SourceSansBold),
@@ -106,10 +95,6 @@ local function App(props: { target: Frame })
 				}, {
 					UICorner = e("UICorner", {
 						CornerRadius = UDim.new(0, 8),
-					}),
-
-					UIScale = e("UIScale", {
-						Scale = styles.scale,
 					}),
 				})
 			),

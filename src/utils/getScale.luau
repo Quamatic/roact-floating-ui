@@ -8,7 +8,7 @@ local function getElementScaleFromAncestors(element: GuiObject)
 	while current ~= nil and current:IsA("GuiObject") do
 		local scale = current:FindFirstChildWhichIsA("UIScale")
 		if scale ~= nil then
-			return scale
+			return scale.Scale
 		end
 
 		current = current.Parent
@@ -26,7 +26,7 @@ local function getScale(element)
 	end
 
 	local scale = getElementScaleFromAncestors(element)
-	return if scale ~= nil then scale else FALLBACK_SCALE
+	return if scale ~= nil then 1 / scale else FALLBACK_SCALE
 end
 
 return getScale

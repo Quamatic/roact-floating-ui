@@ -3,7 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.React)
 local ReactRoblox = require(ReplicatedStorage.ReactRoblox)
 local ReactSpring = require(ReplicatedStorage.ReactSpring)
-local FloatingUI = require(ReplicatedStorage.FloatingUI)
+local FloatingUI = require(ReplicatedStorage.ReactFloating)
 
 local Chrome = require(script.Parent.Chrome)
 
