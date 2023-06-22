@@ -83,6 +83,7 @@ local function computePosition(
 		index += 1
 	end
 
+	-- TODO: move this to detectOverflow so padding can also be adjusted
 	local scale = getScale(floating)
 
 	return {

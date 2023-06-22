@@ -43,9 +43,9 @@ local function useFocus<RT>(context: FloatingContext<RT>, props: UseFocusProps?)
 		end
 
 		local connection = UserInputService.WindowFocusReleased:Connect(function()
-			-- If the reference was focused and the user left the tab/window, and the
+			-- If the reference was focused and the user left the window, and the
 			-- floating element was not open, the focus should be blocked when they
-			-- return to the tab/window.
+			-- return to the window.
 			if not open and isRobloxElement(rbxReference) and isActiveElement(rbxReference) then
 				blockFocusRef.current = true
 			end

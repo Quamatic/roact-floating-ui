@@ -20,7 +20,8 @@ return table.freeze({
 	useInteractions = require(script.hooks.useInteractions),
 	useClick = require(script.hooks.useClick),
 	useHover = require(script.hooks.useHover),
-	useDimiss = require(script.hooks.useDismiss),
+	useFocus = require(script.hooks.useFocus),
+	useDismiss = require(script.hooks.useDismiss),
 	useClientPoint = require(script.hooks.useClientPoint),
 	useTransitionStatus = require(script.hooks.useTransitionStatus),
 
