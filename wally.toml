@@ -3,6 +3,7 @@ name = "quamatic/floating-ui"
 description = "Floating elements implementation for React"
 version = "0.1.0"
 license = "MIT"
+authors = ["Quamatic"]
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 exclude = ["*"]

@@ -1,13 +1,6 @@
 {
   "name": "floating-ui",
   "tree": {
-      "$className": "DataModel",
-      "ReplicatedStorage": {
-          "$className": "ReplicatedStorage",
-          "$path": "Packages",
-          "ReactFloating": {
-            "$path": "src"
-        }
-      }
+    "$path": "src"
   }
 }

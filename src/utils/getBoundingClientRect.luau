@@ -14,6 +14,7 @@ local function getBoundingClientRect(element)
 			right = size.X + position.X,
 		}
 	else
+		-- TODO: Create a better check for this; this is kinda stupid.
 		return element.getBoundingClientRect()
 	end
 end
