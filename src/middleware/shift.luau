@@ -138,7 +138,7 @@ local function limitShift(options: LimitShiftOptions?): {
 				else (options :: LimitShiftOptions).mainAxis
 			local checkCrossAxis = if (options :: LimitShiftOptions).crossAxis == nil
 				then true
-				else options :: LimitShiftOptions
+				else (options :: LimitShiftOptions).crossAxis
 
 			local coords = { x = x, y = y }
 			local mainAxis = getMainAxisFromPlacement(placement)
