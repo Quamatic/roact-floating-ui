@@ -50,8 +50,10 @@ local function shift(options: Options?): Middleware
 			local y = state.y
 			local placement = state.placement
 
-			local checkMainAxis = (options :: Options).mainAxis or true
-			local checkCrossAxis = (options :: Options).crossAxis or false
+			local checkMainAxis = if (options :: Options).mainAxis == nil then true else (options :: Options).mainAxis
+			local checkCrossAxis = if (options :: Options).crossAxis == nil
+				then false
+				else (options :: Options).crossAxis
 			local limiter = (options :: Options).limiter or defaultLimiter
 			local detectOverflowOptions = Object.assign({}, options, {
 				mainAxis = Object.None,
@@ -113,10 +115,14 @@ type LimitShiftOptions = {
 	crossAxis: boolean?,
 }
 
-local function limitShift(options: LimitShiftOptions): {
+local function limitShift(options: LimitShiftOptions?): {
 	options: LimitShiftOptions,
 	fn: (state: MiddlewareState) -> { x: number, y: number },
 }
+	if options == nil then
+		options = {} :: LimitShiftOptions
+	end
+
 	return {
 		options = options,
 		fn = function(state)
@@ -126,9 +132,13 @@ local function limitShift(options: LimitShiftOptions): {
 			local rects = state.rects
 			local middlewareData = state.middlewareData
 
-			local offset = options.offset or 0
-			local checkMainAxis = options.mainAxis or true
-			local checkCrossAxis = options.crossAxis or true
+			local offset = (options :: LimitShiftOptions).offset or 0
+			local checkMainAxis = if (options :: LimitShiftOptions).mainAxis == nil
+				then true
+				else (options :: LimitShiftOptions).mainAxis
+			local checkCrossAxis = if (options :: LimitShiftOptions).crossAxis == nil
+				then true
+				else options :: LimitShiftOptions
 
 			local coords = { x = x, y = y }
 			local mainAxis = getMainAxisFromPlacement(placement)
@@ -144,7 +154,7 @@ local function limitShift(options: LimitShiftOptions): {
 
 			if checkMainAxis then
 				local len = if mainAxis == "y" then "height" else "width"
-				local limitMin = rects.reference[mainAxis] + rects.floating[len] + computedOffset.mainAxis
+				local limitMin = rects.reference[mainAxis] - rects.floating[len] + computedOffset.mainAxis
 				local limitMax = rects.reference[mainAxis] + rects.reference[len] - computedOffset.mainAxis
 
 				if mainAxisCoord < limitMin then

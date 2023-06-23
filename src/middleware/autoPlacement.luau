@@ -62,10 +62,12 @@ local function autoPlacement(options: Options?): Middleware
 			local middlewareData = state.middlewareData
 			local placement = state.placement
 
-			local crossAxis = (options :: Options).crossAxis or false
+			local crossAxis = if (options :: Options).crossAxis == nil then false else (options :: Options).crossAxis
 			local alignment = (options :: Options).alignment
 			local allowedPlacements = (options :: Options).allowedPlacements or allPlacements
-			local autoAlignment = (options :: Options).autoAlignment or true
+			local autoAlignment = if (options :: Options).autoAlignment == nil
+				then true
+				else (options :: Options).autoAlignment
 			local detectOverflowOptions = Object.assign({}, options, {
 				crossAxis = Object.None,
 				alignment = Object.None,

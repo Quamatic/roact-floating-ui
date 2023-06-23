@@ -40,11 +40,15 @@ local function flip(options: Options?): Middleware
 			local initialPlacement = state.initialPlacement
 			local middlewareData = state.middlewareData
 
-			local checkMainAxis = (options :: Options).mainAxis or true
-			local checkCrossAxis = (options :: Options).crossAxis or true
+			local checkMainAxis = if (options :: Options).mainAxis == nil then true else (options :: Options).mainAxis
+			local checkCrossAxis = if (options :: Options).crossAxis == nil
+				then true
+				else (options :: Options).crossAxis
 			local specifiedFallbackPlacements = (options :: Options).fallbackPlacements
-			local flipAlignment = (options :: Options).flipAlignment or true
-			local fallbackAxixSideDirection = (options :: Options).fallbackAxisSideDirection or "none"
+			local flipAlignment = if (options :: Options).flipAlignment == nil
+				then true
+				else (options :: Options).flipAlignment
+			local fallbackAxisSideDirection = (options :: Options).fallbackAxisSideDirection or "none"
 			local fallbackStrategy = (options :: Options).fallbackStrategy or "bestFit"
 			local detectOverflowOptions = Object.assign({}, options, {
 				mainAxis = Object.None,
@@ -65,9 +69,9 @@ local function flip(options: Options?): Middleware
 						else getExpandedPlacements(initialPlacement)
 				)
 
-			if not specifiedFallbackPlacements and fallbackAxixSideDirection ~= "none" then
+			if not specifiedFallbackPlacements and fallbackAxisSideDirection ~= "none" then
 				for _, alignment in
-					getOppositeAxisPlacements(initialPlacement, flipAlignment, fallbackAxixSideDirection)
+					getOppositeAxisPlacements(initialPlacement, flipAlignment, fallbackAxisSideDirection)
 				do
 					table.insert(fallbackPlacements, alignment)
 				end
